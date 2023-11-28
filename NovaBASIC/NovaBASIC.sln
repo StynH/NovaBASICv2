@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34316.72
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NovaBASIC", "NovaBASIC.csproj", "{B231B6AF-7FDA-4D85-A9CB-AFA3CB12BA31}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B231B6AF-7FDA-4D85-A9CB-AFA3CB12BA31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B231B6AF-7FDA-4D85-A9CB-AFA3CB12BA31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B231B6AF-7FDA-4D85-A9CB-AFA3CB12BA31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B231B6AF-7FDA-4D85-A9CB-AFA3CB12BA31}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B377FBFF-767B-4625-8C45-84D7E20749F9}
+	EndGlobalSection
+EndGlobal

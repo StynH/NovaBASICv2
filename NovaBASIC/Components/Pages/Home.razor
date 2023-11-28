@@ -1,0 +1,26 @@
+﻿@page "/"
+@using NovaBASIC.Language.Interpreting
+@using NovaBASIC.Language.Lexicon
+@using NovaBASIC.Language.Parsing
+
+<PageTitle>Home</PageTitle>
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+@code {
+    protected override void OnInitialized()
+    {
+        var lexer = new Lexer();
+        lexer.LoadCodeIntoLexer("2 * 5 + 2 * 5");
+
+        var parser = new Parser(lexer);
+        var program = parser.GetProgram();
+
+        var interpreter = new Interpreter();
+        interpreter.RunProgram(program);
+
+        var _ = 0;
+    }
+}
