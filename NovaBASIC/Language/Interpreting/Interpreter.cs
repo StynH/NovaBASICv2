@@ -1,13 +1,17 @@
 ﻿using NovaBASIC.Language.Interpreting.Interface;
 using NovaBASIC.Language.Parsing.Nodes;
+using NovaBASIC.Language.Runtime;
 using NovaBASIC.Language.STL;
 using System.Reflection;
+using System.Xml.Linq;
 
 namespace NovaBASIC.Language.Interpreting;
 
 public class Interpreter : INodeVisitor
 {
-    private StandardLibrary _stl = new StandardLibrary();
+    private readonly StandardLibrary _stl = new();
+
+    private readonly RuntimeContext _runtimeContext = new();
 
     public object? Result { get; set; } = null;
 
@@ -74,9 +78,29 @@ public class Interpreter : INodeVisitor
         Result = node.Value;
     }
 
+    public void Visit(VariableNode node)
+    {
+        //TODO: This should be different.
+        Result = _runtimeContext.Get(node.Name).Value;
+    }
+
+    public void Visit(VariableDeclarationNode node)
+    {
+        var name = node.Name;
+        var value = ExecuteNode(node.Assignment);
+
+        _runtimeContext.Assign(name, value);
+        Result = null;
+    }
+
     public object? ExecuteNode(AstNode node)
     {
         node.Accept(this);
         return Result;
+    }
+
+    public RuntimeContext GetRuntimeContext()
+    {
+        return _runtimeContext;
     }
 }

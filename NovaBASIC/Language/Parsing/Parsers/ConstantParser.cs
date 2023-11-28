@@ -7,7 +7,7 @@ namespace NovaBASIC.Language.Parsing.Parsers;
 [NodeParser("CONSTANTS")]
 public class ConstantParser : INodeParser
 {
-    public AstNode Parse(Queue<string> tokens, string currentToken)
+    public AstNode Parse(Queue<string> tokens, string currentToken, Parser parser)
     {
         if (int.TryParse(currentToken, out int intVal))
         {
@@ -23,7 +23,7 @@ public class ConstantParser : INodeParser
         }
         else
         {
-            return new ConstantNode<string>(currentToken);
+            return new ConstantNode<string>(currentToken[1..^1]);
         }
     }
 }

@@ -2,44 +2,49 @@
 
 public class RuntimeContext(RuntimeContext? parent = null)
 {
-    private Dictionary<string, object> variables = new Dictionary<string, object>();
-    private readonly RuntimeContext? parentRuntimeContext = parent; // Parent RuntimeContext for nested scopes
+    private Dictionary<string, object?> _variables = new Dictionary<string, object?>();
+    private readonly RuntimeContext? _parentRuntimeContext = parent; // Parent RuntimeContext for nested scopes
 
-    public void Assign(string variableName, object value)
+    public void Assign(string variableName, object? value)
     {
-        if (variables.ContainsKey(variableName))
+        if (_variables.ContainsKey(variableName))
         {
-            variables[variableName] = value;
+            _variables[variableName] = value;
             return;
         }
 
-        var currentRuntimeContext = parentRuntimeContext;
+        var currentRuntimeContext = _parentRuntimeContext;
         while (currentRuntimeContext != null)
         {
-            if (currentRuntimeContext.variables.ContainsKey(variableName))
+            if (currentRuntimeContext._variables.ContainsKey(variableName))
             {
-                currentRuntimeContext.variables[variableName] = value;
+                currentRuntimeContext._variables[variableName] = value;
                 return;
             }
-            currentRuntimeContext = currentRuntimeContext.parentRuntimeContext;
+            currentRuntimeContext = currentRuntimeContext._parentRuntimeContext;
         }
 
-        variables[variableName] = value;
+        _variables[variableName] = value;
     }
 
-    public object Get(string variableName)
+    public MemoryItem Get(string variableName)
     {
-        if (variables.TryGetValue(variableName, out var value))
+        if (_variables.TryGetValue(variableName, out var value))
         {
-            return value;
+            return new MemoryItem(variableName, value);
         }
 
-        return parentRuntimeContext?.Get(variableName)
+        return _parentRuntimeContext?.Get(variableName)
                ?? throw new KeyNotFoundException($"Variable '{variableName}' not found.");
     }
 
     public RuntimeContext CreateChildRuntimeContext()
     {
         return new RuntimeContext(this);
+    }
+
+    public RuntimeContext? PopRuntimeContext()
+    {
+        return _parentRuntimeContext;
     }
 }

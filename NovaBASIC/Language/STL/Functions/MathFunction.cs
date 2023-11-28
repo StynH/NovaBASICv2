@@ -1,4 +1,5 @@
 ﻿using NovaBASIC.Language.Interpreting;
+using NovaBASIC.Language.Interpreting.Safe;
 using NovaBASIC.Language.Lexicon;
 using NovaBASIC.Language.Parsing.Nodes;
 using NovaBASIC.Language.STL.Attribute;
@@ -29,7 +30,7 @@ public class MathFunction : IStlFunction
             switch (binaryNode.Op)
             {
                 case Tokens.PLUS:
-                    interpreter.Result = lhs + rhs;
+                    interpreter.Result = Operations.Add(lhs, rhs);
                     break;
                 case Tokens.MINUS:
                     interpreter.Result = lhs - rhs;

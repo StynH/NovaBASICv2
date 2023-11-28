@@ -40,19 +40,19 @@ public class Parser
         var nodes = new List<AstNode>();
         while (_tokens.Count > 0)
         {
-            nodes.Add(ParseExpr());
+            nodes.Add(ParseNode());
         }
         return nodes;
     }
 
-    public AstNode ParseExpr()
+    public AstNode ParseNode()
     {
         var term = ParseTerm();
 
         if (_tokens.TryPeek(out var next) && (next.IsArithmetic() || next.IsEqualityCheck()))
         {
             var op = _tokens.Dequeue();
-            return BalanceNode(new BinaryNode(term, op, ParseExpr()));
+            return BalanceNode(new BinaryNode(term, op, ParseNode()));
         }
 
         return term;
@@ -61,7 +61,19 @@ public class Parser
     private AstNode ParseTerm()
     {
         var token = _tokens.Dequeue();
-        return _tokenParsers["CONSTANTS"].Parse(_tokens, token);
+        if (_tokenParsers.TryGetValue(token, out INodeParser? parser))
+        {
+            return parser.Parse(_tokens, token, this);
+        }
+
+        if(!token.StartsWith('\"') 
+            && !token.EndsWith('\"') 
+            && !token.IsNumeric()
+        ) {
+            return new VariableNode(token);
+        }
+
+        return _tokenParsers["CONSTANTS"].Parse(_tokens, token, this);
     }
 
     private static AstNode BalanceNode(AstNode node)

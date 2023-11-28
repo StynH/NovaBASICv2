@@ -4,5 +4,5 @@ namespace NovaBASIC.Language.Parsing.Parsers.Interface;
 
 public interface INodeParser
 {
-    AstNode Parse(Queue<string> tokens, string currentToken);
+    AstNode Parse(Queue<string> tokens, string currentToken, Parser parser);
 }

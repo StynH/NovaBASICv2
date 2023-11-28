@@ -13,7 +13,7 @@ Welcome to your new app.
     protected override void OnInitialized()
     {
         var lexer = new Lexer();
-        lexer.LoadCodeIntoLexer("2 * 5 + 2 * 5");
+        lexer.LoadCodeIntoLexer("LET i = 5\nLET j = \"My Name\"\nLET y = 2\nLET x = y + j + i");
 
         var parser = new Parser(lexer);
         var program = parser.GetProgram();

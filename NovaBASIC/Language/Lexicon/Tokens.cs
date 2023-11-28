@@ -42,7 +42,7 @@ public static class Tokens
     public const string ELSE = "ELSE";
     public const string ELSEIF = "ELSEIF";
 
-    public const string FUNCTION_PATTERN = "[a-zA-Z_$][a-zA-Z0-9_$]*\\(";
+    public const string DECLARATION_PATTERN = "[a-zA-Z_$][a-zA-Z0-9_$]*";
     public const string OPENING_PARENTHESIS = "(";
     public const string CLOSING_PARENTHESIS = ")";
 
