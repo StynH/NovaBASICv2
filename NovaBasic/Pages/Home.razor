@@ -1,0 +1,36 @@
+﻿@page "/"
+@using NovaBASIC.Language.Interpreting
+@using NovaBASIC.Language.Lexicon
+@using NovaBASIC.Language.Parsing
+@inject IJSRuntime JSRuntime
+
+<PageTitle>NovaBASIC</PageTitle>
+
+<div id="novabasic-editor" style="height: 400px"></div>
+<button @onclick="RunCodeAsync">Run</button>
+
+@code{
+    protected override async Task OnAfterRenderAsync(bool firstRender){
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("createMonacoEditor", "novabasic-editor");
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    private async Task RunCodeAsync(MouseEventArgs args){
+        var code = await JSRuntime.InvokeAsync<string>("getMonacoEditorValue");
+
+        var lexer = new Lexer();
+        lexer.LoadCodeIntoLexer(code);
+
+        var parser = new Parser(lexer);
+        var program = parser.GetProgram();
+
+        var interpreter = new Interpreter();
+        interpreter.RunProgram(program);
+
+        var _ = 0;
+    }
+}
+

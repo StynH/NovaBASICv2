@@ -80,7 +80,7 @@ public class Interpreter : INodeVisitor
 
     public void Visit(VariableNode node)
     {
-        //TODO: This should be different.
+        //TODO: The '.Value' thing should be different.
         Result = _runtimeContext.Get(node.Name).Value;
     }
 
@@ -90,6 +90,22 @@ public class Interpreter : INodeVisitor
         var value = ExecuteNode(node.Assignment);
 
         _runtimeContext.Assign(name, value);
+        Result = null;
+    }
+
+    public void Visit(ConditionalNode node)
+    {
+        var conditionResult = (bool)ExecuteNode(node.Condition)!;
+        if (conditionResult)
+        {
+            foreach (var expr in node.TrueBody) { 
+                ExecuteNode(expr);
+            }
+        }
+        else
+        {
+            node.Else?.Accept(this);
+        }
         Result = null;
     }
 

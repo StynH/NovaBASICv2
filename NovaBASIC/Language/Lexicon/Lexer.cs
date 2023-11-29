@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using NovaBASIC.Extensions;
+using System.Text.RegularExpressions;
 
 namespace NovaBASIC.Language.Lexicon;
 
@@ -8,11 +9,11 @@ public class Lexer
 
     public void LoadCodeIntoLexer(string code) {
         new Regex(Tokens.BuildRegexPattern())
-            .Matches(code)
+            .Matches(code.RemoveCommentLines())
             .Select(x => x.Value)
             .Where(x => x != Environment.NewLine)
             .ToList()
-            .ForEach(x => _tokens.Enqueue(x));
+            .ForEach(_tokens.Enqueue);
     }
 
     public Queue<string> GetTokens()

@@ -35,8 +35,8 @@ public static class Tokens
     public const string THEN = "THEN";
     public const string RETURN = "RETURN";
     public const string ENDIF = "ENDIF";
-    public const string SUB = "SUB";
-    public const string END_SUB = "ENDSUB";
+    public const string FUNC = "FUNC";
+    public const string END_FUNC = "ENDFUNC";
     public const string GUARD = "GUARD";
     public const string END_GUARD = "ENDGUARD";
     public const string ELSE = "ELSE";

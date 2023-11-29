@@ -17,54 +17,21 @@ public class MathFunction : IStlFunction
             var lhs = interpreter.ExecuteNode(binaryNode.Left) as dynamic;
             var rhs = interpreter.ExecuteNode(binaryNode.Right) as dynamic;
 
-            if(lhs is null)
+            interpreter.Result = binaryNode.Op switch
             {
-                throw new ArgumentNullException(nameof(lhs));
-            }
-
-            if (rhs is null)
-            {
-                throw new ArgumentNullException(nameof(lhs));
-            }
-
-            switch (binaryNode.Op)
-            {
-                case Tokens.PLUS:
-                    interpreter.Result = Operations.Add(lhs, rhs);
-                    break;
-                case Tokens.MINUS:
-                    interpreter.Result = lhs - rhs;
-                    break;
-                case Tokens.DIVIDE:
-                    interpreter.Result = lhs / rhs;
-                    break;
-                case Tokens.MULTIPLY:
-                    interpreter.Result = lhs * rhs;
-                    break;
-                case Tokens.MODULO:
-                    interpreter.Result = lhs % rhs;
-                    break;
-                case Tokens.EQUALS:
-                    interpreter.Result = lhs.Equals(rhs);
-                    break;
-                case Tokens.NOT_EQUALS:
-                    interpreter.Result = !lhs.Equals(rhs);
-                    break;
-                case Tokens.GTE:
-                    interpreter.Result = lhs >= rhs;
-                    break;
-                case Tokens.LTE:
-                    interpreter.Result = lhs <= rhs;
-                    break;
-                case Tokens.LT:
-                    interpreter.Result = lhs < rhs;
-                    break;
-                case Tokens.GT:
-                    interpreter.Result = lhs > rhs;
-                    break;
-                default:
-                    throw new ArithmeticException($"Unknown arithmetic operator '{binaryNode.Op}'.");
-            }
+                Tokens.PLUS => Operations.Add(lhs, rhs),
+                Tokens.MINUS => lhs - rhs,
+                Tokens.DIVIDE => lhs / rhs,
+                Tokens.MULTIPLY => lhs * rhs,
+                Tokens.MODULO => lhs % rhs,
+                Tokens.EQUALS => lhs == rhs,
+                Tokens.NOT_EQUALS => lhs != rhs,
+                Tokens.GTE => lhs >= rhs,
+                Tokens.LTE => lhs <= rhs,
+                Tokens.LT => lhs < rhs,
+                Tokens.GT => lhs > rhs,
+                _ => throw new ArithmeticException($"Unknown arithmetic operator '{binaryNode.Op}'."),
+            };
         }
 
         return null;
