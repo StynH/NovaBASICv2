@@ -2,6 +2,7 @@
 @using NovaBASIC.Language.Interpreting
 @using NovaBASIC.Language.Lexicon
 @using NovaBASIC.Language.Parsing
+@using System.Reflection
 @inject IJSRuntime JSRuntime
 
 <PageTitle>NovaBASIC</PageTitle>
@@ -9,7 +10,16 @@
 <div id="novabasic-editor" style="height: 400px"></div>
 <button @onclick="RunCodeAsync">Run</button>
 
+@if (_error != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @_error
+    </div>
+}
+
 @code{
+    private string? _error = null;
+
     protected override async Task OnAfterRenderAsync(bool firstRender){
         if (firstRender)
         {
@@ -21,16 +31,27 @@
     private async Task RunCodeAsync(MouseEventArgs args){
         var code = await JSRuntime.InvokeAsync<string>("getMonacoEditorValue");
 
-        var lexer = new Lexer();
-        lexer.LoadCodeIntoLexer(code);
+        try
+        {
+            var lexer = new Lexer();
+            lexer.LoadCodeIntoLexer(code);
 
-        var parser = new Parser(lexer);
-        var program = parser.GetProgram();
+            var parser = new Parser(lexer);
+            var program = parser.GetProgram();
 
-        var interpreter = new Interpreter();
-        interpreter.RunProgram(program);
+            var interpreter = new Interpreter();
+            interpreter.RunProgram(program);
 
-        var _ = 0;
+            _error = null;
+        }
+        catch(Exception e)
+        {
+            while (e is TargetInvocationException)
+            {
+                e = e.InnerException!;
+            }
+            _error = e.Message;
+        }
     }
 }
 

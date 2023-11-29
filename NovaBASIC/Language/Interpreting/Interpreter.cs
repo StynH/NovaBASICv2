@@ -3,15 +3,16 @@ using NovaBASIC.Language.Parsing.Nodes;
 using NovaBASIC.Language.Runtime;
 using NovaBASIC.Language.STL;
 using System.Reflection;
-using System.Xml.Linq;
 
 namespace NovaBASIC.Language.Interpreting;
 
-public class Interpreter : INodeVisitor
+public partial class Interpreter : INodeVisitor
 {
     private readonly StandardLibrary _stl = new();
 
-    private readonly RuntimeContext _runtimeContext = new();
+    private RuntimeContext _runtimeContext = new();
+
+    private bool _returnIsCalled;
 
     public object? Result { get; set; } = null;
 
@@ -98,9 +99,16 @@ public class Interpreter : INodeVisitor
         var conditionResult = (bool)ExecuteNode(node.Condition)!;
         if (conditionResult)
         {
+            CreateScope();
             foreach (var expr in node.TrueBody) { 
                 ExecuteNode(expr);
+                if (_returnIsCalled)
+                {
+                    _returnIsCalled = false;
+                    break;
+                }
             }
+            PopScope();
         }
         else
         {
@@ -118,5 +126,15 @@ public class Interpreter : INodeVisitor
     public RuntimeContext GetRuntimeContext()
     {
         return _runtimeContext;
+    }
+
+    private void CreateScope()
+    {
+        _runtimeContext = _runtimeContext.CreateChildRuntimeContext();
+    }
+
+    private void PopScope()
+    {
+        _runtimeContext = _runtimeContext.PopRuntimeContext() ?? _runtimeContext;
     }
 }

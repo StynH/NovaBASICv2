@@ -4,6 +4,7 @@ using NovaBASIC.Language.Lexicon;
 using NovaBASIC.Language.Parsing.Nodes;
 using NovaBASIC.Language.STL.Attribute;
 using NovaBASIC.Language.STL.Functions.Interface;
+using System.Text.RegularExpressions;
 
 namespace NovaBASIC.Language.STL.Functions;
 
@@ -30,6 +31,7 @@ public class MathFunction : IStlFunction
                 Tokens.LTE => lhs <= rhs,
                 Tokens.LT => lhs < rhs,
                 Tokens.GT => lhs > rhs,
+                Tokens.MATCHES_STL => Regex.IsMatch(lhs, rhs),
                 _ => throw new ArithmeticException($"Unknown arithmetic operator '{binaryNode.Op}'."),
             };
         }

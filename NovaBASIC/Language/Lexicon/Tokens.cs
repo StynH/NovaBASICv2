@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace NovaBASIC.Language.Lexicon;
 
-public static class Tokens
+public static partial class Tokens
 {
     // Operators
     public const string PLUS = "+";
@@ -39,8 +39,8 @@ public static class Tokens
     public const string END_FUNC = "ENDFUNC";
     public const string GUARD = "GUARD";
     public const string END_GUARD = "ENDGUARD";
-    public const string ELSE = "ELSE";
     public const string ELSEIF = "ELSEIF";
+    public const string ELSE = "ELSE";
 
     public const string DECLARATION_PATTERN = "[a-zA-Z_$][a-zA-Z0-9_$]*";
     public const string OPENING_PARENTHESIS = "(";
@@ -54,28 +54,6 @@ public static class Tokens
     public const string NEXT = "NEXT";
     public const string GOTO = "GOTO";
     public const string BY = "BY";
-
-    // STL
-    public const string INCREMENT_STL = "INCREMENT";
-    public const string DECREMENT_STL = "DECREMENT";
-    public const string MULTIPLY_STL = "MULTIPLY";
-    public const string DIVIDE_STL = "DIVIDE";
-    public const string PRINT_STL = "PRINT";
-    public const string MATCHES_STL = "MATCHES";
-    public const string ARRAY_RESIZE_STL = "ARRAY_RESIZE";
-    public const string LENGTH_STL = "LEN";
-
-    // Math
-    public const string RANDOM_STL = "RAND";
-    public const string FLOOR_STL = "FLOOR";
-    public const string CEIL_STL = "CEIL";
-    public const string SIN_STL = "SIN";
-    public const string COS_STL = "COS";
-    public const string TAN_STL = "TAN";
-
-    // Patterns
-    public const string AZ09_PATTERN = "[a-zA-Z0-9_]+";
-    public const string LITERALS_PATTERN = "\"([^\"]+)\"";
 
     public static string BuildRegexPattern()
     {

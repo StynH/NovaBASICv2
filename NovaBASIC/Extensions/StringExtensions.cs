@@ -25,10 +25,20 @@ public static class StringExtensions
         return decimal.TryParse(input, NumberStyles.Any, CultureInfo.InvariantCulture, out _);
     }
 
+    public static bool IsSTLOperation(this string input){
+        return input.Equals(Tokens.MATCHES_STL);
+    }
+
     public static string RemoveCommentLines(this string input)
     {
-        var lines = input.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
-        var filteredLines = lines.Where(line => !line.TrimStart().StartsWith("//"));
-        return string.Join(Environment.NewLine, filteredLines);
+        return string.Join(Environment.NewLine, input.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None)
+            .Where(line => !line.TrimStart()
+            .StartsWith("//"))
+        );
+    }
+
+    public static bool IsKnownKeyword(this string input)
+    {
+        return input.Equals(Tokens.BOOL_TRUE) || input.Equals(Tokens.BOOL_FALSE) || input.Equals(Tokens.NULL);
     }
 }

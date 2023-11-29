@@ -49,7 +49,7 @@ public class Parser
     {
         var term = ParseTerm();
 
-        if (_tokens.TryPeek(out var next) && (next.IsArithmetic() || next.IsEqualityCheck()))
+        if (_tokens.TryPeek(out var next) && (next.IsArithmetic() || next.IsEqualityCheck() || next.IsSTLOperation()))
         {
             var op = _tokens.Dequeue();
             return BalanceNode(new BinaryNode(term, op, ParseNode()));
@@ -69,6 +69,7 @@ public class Parser
         if(!token.StartsWith('\"') 
             && !token.EndsWith('\"') 
             && !token.IsNumeric()
+            && !token.IsKnownKeyword()
         ) {
             return new VariableNode(token);
         }

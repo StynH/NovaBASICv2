@@ -2,7 +2,7 @@
 
 public class RuntimeContext(RuntimeContext? parent = null)
 {
-    private Dictionary<string, object?> _variables = new Dictionary<string, object?>();
+    private Dictionary<string, object?> _variables = [];
     private readonly RuntimeContext? _parentRuntimeContext = parent; // Parent RuntimeContext for nested scopes
 
     public void Assign(string variableName, object? value)
