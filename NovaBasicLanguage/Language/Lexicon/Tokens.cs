@@ -48,6 +48,7 @@ public static partial class Tokens
     public const string CLOSING_PARENTHESIS = ")";
 
     public const string LET = "LET";
+    public const string IMMUTABLE = "IMMUTABLE";
     public const string WHILE = "WHILE";
     public const string FOR = "FOR";
     public const string TO = "TO";

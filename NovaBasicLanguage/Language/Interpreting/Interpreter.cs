@@ -89,7 +89,7 @@ public partial class Interpreter : INodeVisitor
             return;
         }
 
-        _runtimeContext.Assign(name, value, false);
+        _runtimeContext.Assign(name, value, node.IsImmutable);
         Result = null;
     }
 
