@@ -3,10 +3,11 @@ using NovaBASIC.Language.Lexicon;
 using NovaBASIC.Language.Parsing.Nodes;
 using NovaBASIC.Language.Parsing.Parsers.Attribute;
 using NovaBASIC.Language.Parsing.Parsers.Interface;
+using NovaBASIC.Language.STL;
 
 namespace NovaBASIC.Language.Parsing;
 
-public class Parser
+public partial class Parser
 {
     private readonly Dictionary<string, INodeParser> _tokenParsers = [];
     private readonly Queue<string> _tokens;
@@ -66,7 +67,12 @@ public class Parser
             return parser.Parse(_tokens, token, this);
         }
 
-        if(!token.StartsWith('\"') 
+        if (StandardLibrary.IsKnownToken(token))
+        {
+            return ParseStl(token);
+        }
+
+        if (!token.StartsWith('\"') 
             && !token.EndsWith('\"') 
             && !token.IsNumeric()
             && !token.IsKnownKeyword()

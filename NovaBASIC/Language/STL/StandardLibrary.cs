@@ -1,4 +1,7 @@
-﻿using NovaBASIC.Language.STL.Attribute;
+﻿using NovaBasic.Language.STL.Parsers;
+using NovaBasic.Language.STL.Runtime;
+using NovaBASIC.Language.Runtime;
+using NovaBASIC.Language.STL.Attribute;
 using NovaBASIC.Language.STL.Functions.Interface;
 
 namespace NovaBASIC.Language.STL;
@@ -26,6 +29,14 @@ public class StandardLibrary
         }
     }
 
+    public void RegisterStandardVariables(RuntimeContext memoryContext)
+    {
+        foreach(var variable in StlVariables.STANDARD_VARIABLES)
+        {
+            memoryContext.Assign(variable);
+        }
+    }
+
     public IStlFunction GetFunction(string name)
     {
         if (functions.TryGetValue(name, out var function))
@@ -34,5 +45,11 @@ public class StandardLibrary
         }
 
         throw new Exception($"Function '{name}' not found in the standard library.");
+    }
+
+    public static bool IsKnownToken(string token)
+    {
+        //TODO: Extend and streamline this.
+        return TrigonometricParser.KNOWN_TOKENS.Contains(token);
     }
 }

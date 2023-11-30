@@ -1,37 +1,49 @@
-﻿namespace NovaBASIC.Language.Runtime;
+﻿using NovaBasic.Language.Exceptions;
+
+namespace NovaBASIC.Language.Runtime;
 
 public class RuntimeContext(RuntimeContext? parent = null)
 {
-    private Dictionary<string, object?> _variables = [];
+    private Dictionary<string, MemoryItem> _variables = [];
     private readonly RuntimeContext? _parentRuntimeContext = parent; // Parent RuntimeContext for nested scopes
 
-    public void Assign(string variableName, object? value)
+    public void Assign(string variableName, object? value, bool isImmutable)
     {
         if (_variables.ContainsKey(variableName))
         {
-            _variables[variableName] = value;
+            _variables[variableName] = new MemoryItem(variableName, value, isImmutable);
             return;
         }
 
         var currentRuntimeContext = _parentRuntimeContext;
         while (currentRuntimeContext != null)
         {
-            if (currentRuntimeContext._variables.ContainsKey(variableName))
+            if (currentRuntimeContext._variables.TryGetValue(variableName, out var item))
             {
-                currentRuntimeContext._variables[variableName] = value;
+                if (!item.IsImmutable)
+                {
+                    throw new MutabilityViolationException(variableName);
+                }
+
+                item.Value = value;
                 return;
             }
             currentRuntimeContext = currentRuntimeContext._parentRuntimeContext;
         }
 
-        _variables[variableName] = value;
+        _variables[variableName] = new MemoryItem(variableName, value, isImmutable);
+    }
+
+    public void Assign(MemoryItem memoryItem)
+    {
+        _variables[memoryItem.Name] = memoryItem;
     }
 
     public MemoryItem Get(string variableName)
     {
-        if (_variables.TryGetValue(variableName, out var value))
+        if (_variables.TryGetValue(variableName, out var item))
         {
-            return new MemoryItem(variableName, value);
+            return item;
         }
 
         return _parentRuntimeContext?.Get(variableName)

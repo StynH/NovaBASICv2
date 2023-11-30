@@ -1,15 +1,12 @@
 ﻿using NovaBASIC.Language.Interpreting.Interface;
 using NovaBASIC.Language.Parsing.Nodes;
 using NovaBASIC.Language.Runtime;
-using NovaBASIC.Language.STL;
 using System.Reflection;
 
 namespace NovaBASIC.Language.Interpreting;
 
 public partial class Interpreter : INodeVisitor
 {
-    private readonly StandardLibrary _stl = new();
-
     private RuntimeContext _runtimeContext = new();
 
     private bool _returnIsCalled;
@@ -90,7 +87,7 @@ public partial class Interpreter : INodeVisitor
         var name = node.Name;
         var value = ExecuteNode(node.Assignment);
 
-        _runtimeContext.Assign(name, value);
+        _runtimeContext.Assign(name, value, false);
         Result = null;
     }
 

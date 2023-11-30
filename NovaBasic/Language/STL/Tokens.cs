@@ -21,6 +21,7 @@ public static partial class Tokens
     public const string TAN_STL = "TAN";
 
     // Patterns
+    public const string FLOAT_PATTERN = "\\d+\\.\\d+";
     public const string AZ09_PATTERN = "[a-zA-Z0-9_]+";
     public const string LITERALS_PATTERN = "\"([^\"]+)\"";
 }
