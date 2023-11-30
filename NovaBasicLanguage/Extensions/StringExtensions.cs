@@ -12,7 +12,18 @@ public static class StringExtensions
 
     public static bool IsEqualityCheck(this string value)
     {
-        return value.Equals(Tokens.EQUALS) || value.Equals(Tokens.NOT_EQUALS) || value.Equals(Tokens.GT) || value.Equals(Tokens.GTE) || value.Equals(Tokens.LT) || value.Equals(Tokens.LTE);
+        return value.Equals(Tokens.EQUALS) 
+            || value.Equals(Tokens.NOT_EQUALS) 
+            || value.Equals(Tokens.GT) 
+            || value.Equals(Tokens.GTE) 
+            || value.Equals(Tokens.LT) 
+            || value.Equals(Tokens.LTE);
+    }
+
+    public static bool IsOrAnd(this string value)
+    {
+        return value.Equals(Tokens.AND)
+            || value.Equals(Tokens.OR);
     }
 
     public static bool IsNumeric(this string input)

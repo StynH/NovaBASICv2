@@ -25,7 +25,7 @@ public class TrigonometricParser : INodeParser
             throw new MalformedStatementException(currentToken, Tokens.OPENING_PARENTHESIS);
         }
 
-        var operand = parser.ParseNode();
+        var operand = parser.ParseTernary();
 
         if (tokens.Dequeue() != Tokens.CLOSING_PARENTHESIS)
         {

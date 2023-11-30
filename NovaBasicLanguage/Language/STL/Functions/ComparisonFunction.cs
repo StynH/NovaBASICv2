@@ -15,6 +15,11 @@ public class ComparisonFunction : IStlFunction
     {
         if(node is BinaryNode binaryNode)
         {
+            if (binaryNode.Op.Equals(Tokens.OR))
+            {
+                return ExecuteOr(interpreter, binaryNode);
+            }
+
             var lhs = interpreter.ExecuteNode(binaryNode.Left) as dynamic;
             var rhs = interpreter.ExecuteNode(binaryNode.Right) as dynamic;
 
@@ -31,11 +36,22 @@ public class ComparisonFunction : IStlFunction
                 Tokens.LTE => lhs <= rhs,
                 Tokens.LT => lhs < rhs,
                 Tokens.GT => lhs > rhs,
+                Tokens.AND => lhs && rhs,
                 Tokens.MATCHES_STL => Regex.IsMatch(lhs, rhs),
                 _ => throw new ArithmeticException($"Unknown arithmetic operator '{binaryNode.Op}'."),
             };
         }
 
         return null;
+    }
+
+    private static object? ExecuteOr(Interpreter interpreter, BinaryNode binaryNode)
+    {
+        var lhs = interpreter.ExecuteNode(binaryNode.Left) as dynamic;
+        if (lhs)
+        {
+            return true;
+        }
+        return interpreter.ExecuteNode(binaryNode.Right);
     }
 }

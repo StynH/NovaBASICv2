@@ -14,6 +14,6 @@ public class ImmutableDeclarationParser : INodeParser
         var variable = tokens.Dequeue();
         tokens.Dequeue(); //Pop the '='.
 
-        return new VariableDeclarationNode(variable, parser.ParseNode(), true);
+        return new VariableDeclarationNode(variable, parser.ParseTernary(), true);
     }
 }

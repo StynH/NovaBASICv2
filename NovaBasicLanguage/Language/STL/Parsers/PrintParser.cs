@@ -11,6 +11,6 @@ public class PrintParser : INodeParser
 {
     public AstNode Parse(Queue<string> tokens, string currentToken, Parser parser)
     {
-        return new PrintNode(parser.ParseNode());
+        return new PrintNode(parser.ParseTernary());
     }
 }

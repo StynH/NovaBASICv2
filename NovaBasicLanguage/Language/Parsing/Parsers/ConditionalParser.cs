@@ -16,7 +16,7 @@ public class ConditionalParser : INodeParser
 
     private static ConditionalNode ParseConditional(Queue<string> tokens, string currentToken, Parser parser)
     {
-        var condition = currentToken != Tokens.ELSE ? parser.ParseNode() : new ConstantNode<bool>(true);
+        var condition = currentToken != Tokens.ELSE ? parser.ParseTernary() : new ConstantNode<bool>(true);
         if (tokens.Peek() != Tokens.THEN)
         {
             throw new MalformedStatementException(Tokens.IF, Tokens.THEN);
@@ -46,7 +46,7 @@ public class ConditionalParser : INodeParser
                 break;
             }
 
-            body.Add(parser.ParseNode());
+            body.Add(parser.ParseTernary());
         }
 
         if (!terminatedCorrectly)

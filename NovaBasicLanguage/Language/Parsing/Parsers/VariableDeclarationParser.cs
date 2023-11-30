@@ -13,6 +13,6 @@ public class VariableDeclarationParser : INodeParser
         var variable = tokens.Dequeue();
         tokens.Dequeue(); //Pop the '='.
 
-        return new VariableDeclarationNode(variable, parser.ParseNode());
+        return new VariableDeclarationNode(variable, parser.ParseTernary());
     }
 }

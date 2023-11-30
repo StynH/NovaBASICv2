@@ -41,19 +41,38 @@ public partial class Parser
         var nodes = new List<AstNode>();
         while (_tokens.Count > 0)
         {
-            nodes.Add(ParseNode());
+            nodes.Add(ParseTernary());
         }
         return nodes;
     }
 
-    public AstNode ParseNode()
+    public AstNode ParseTernary()
+    {
+        var term = ParseBinary();
+
+        if(_tokens.TryPeek(out var next))
+        {
+            if (next.IsOrAnd())
+            {
+                var op = _tokens.Dequeue();
+                term = BalanceNode(new BinaryNode(term, op, ParseTernary()));
+            }
+        }
+
+        return term;
+    }
+
+    public AstNode ParseBinary()
     {
         var term = ParseTerm();
 
-        if (_tokens.TryPeek(out var next) && (next.IsArithmetic() || next.IsEqualityCheck() || next.IsSTLOperation()))
+        if (_tokens.TryPeek(out var next))
         {
-            var op = _tokens.Dequeue();
-            return BalanceNode(new BinaryNode(term, op, ParseNode()));
+            if (next.IsArithmetic() || next.IsEqualityCheck() || next.IsSTLOperation())
+            {
+                var op = _tokens.Dequeue();
+                term = BalanceNode(new BinaryNode(term, op, ParseTerm()));
+            }
         }
 
         return term;
@@ -76,7 +95,7 @@ public partial class Parser
             if(_tokens.TryPeek(out var next) && next == Tokens.SET)
             {
                 _tokens.Dequeue();
-                return new VariableDeclarationNode(token, ParseNode());
+                return new VariableDeclarationNode(token, ParseTernary());
             }
 
             return new VariableNode(token);
