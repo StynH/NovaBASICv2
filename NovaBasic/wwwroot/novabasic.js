@@ -20,6 +20,9 @@
             // delimiters and operators
             [/[{}()\[\]]/, '@brackets'],
             [/@symbols/, 'delimiter'],
+
+            [/\d*\.\d+([eE][\-+]?\d+)?/, 'number.float']
+            [/\d+/, 'number'],
         ],
 
         whitespace: [
