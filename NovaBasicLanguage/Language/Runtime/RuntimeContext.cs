@@ -22,6 +22,10 @@ public class RuntimeContext(RuntimeContext? parent = null)
 
         if (_variables.ContainsKey(variableName))
         {
+            if (_variables[variableName].IsImmutable)
+            {
+                throw new MutabilityViolationException(variableName);
+            }
             _variables[variableName] = new MemoryItem(variableName, value, isImmutable);
             return;
         }
@@ -31,7 +35,7 @@ public class RuntimeContext(RuntimeContext? parent = null)
         {
             if (currentRuntimeContext._variables.TryGetValue(variableName, out var item))
             {
-                if (!item.IsImmutable)
+                if (item.IsImmutable)
                 {
                     throw new MutabilityViolationException(variableName);
                 }
@@ -47,13 +51,7 @@ public class RuntimeContext(RuntimeContext? parent = null)
 
     public void Assign(MemoryItem memoryItem)
     {
-        var variableName = memoryItem.Name;
-        if (_references.TryGetValue(variableName, out var reference))
-        {
-            variableName = reference.VariableName;
-        }
-
-        _variables[variableName] = memoryItem;
+        Assign(memoryItem.Name, memoryItem.Value, memoryItem.IsImmutable);
     }
 
     public void AssignReference(string variableName, MemoryReference reference)
@@ -67,7 +65,6 @@ public class RuntimeContext(RuntimeContext? parent = null)
         {
             variableName = reference.VariableName;
         }
-
         if (_variables.TryGetValue(variableName, out var item))
         {
             return item;
