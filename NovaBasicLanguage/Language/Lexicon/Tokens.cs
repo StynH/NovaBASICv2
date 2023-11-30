@@ -41,6 +41,7 @@ public static partial class Tokens
     public const string END_GUARD = "ENDGUARD";
     public const string ELSEIF = "ELSEIF";
     public const string ELSE = "ELSE";
+    public const string REF = "REF";
 
     public const string DECLARATION_PATTERN = "[a-zA-Z_$][a-zA-Z0-9_$]*";
     public const string OPENING_PARENTHESIS = "(";

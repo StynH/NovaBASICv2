@@ -1,6 +1,8 @@
 ﻿using NovaBASIC.Language.Interpreting.Interface;
 using NovaBASIC.Language.Parsing.Nodes;
 using NovaBASIC.Language.Runtime;
+using NovaBasicLanguage.Language.Parsing.Nodes;
+using NovaBasicLanguage.Language.Runtime;
 using System.Reflection;
 
 namespace NovaBASIC.Language.Interpreting;
@@ -64,13 +66,6 @@ public partial class Interpreter : INodeVisitor
         return null;
     }
 
-    public void Visit(BinaryNode node)
-    {
-        _stl
-            .GetFunction("MATH")
-            .Execute(this, node);
-    }
-
     public void Visit<T>(ConstantNode<T> node)
     {
         Result = node.Value;
@@ -87,8 +82,20 @@ public partial class Interpreter : INodeVisitor
         var name = node.Name;
         var value = ExecuteNode(node.Assignment);
 
+        if(value is MemoryReference reference)
+        {
+            _runtimeContext.AssignReference(name, reference);
+            Result = null;
+            return;
+        }
+
         _runtimeContext.Assign(name, value, false);
         Result = null;
+    }
+
+    public void Visit(ReferenceNode node)
+    {
+        Result = new MemoryReference(node.VariableName);
     }
 
     public void Visit(ConditionalNode node)

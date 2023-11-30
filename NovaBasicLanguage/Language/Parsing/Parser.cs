@@ -72,11 +72,13 @@ public partial class Parser
             return ParseStl(token);
         }
 
-        if (!token.StartsWith('\"') 
-            && !token.EndsWith('\"') 
-            && !token.IsNumeric()
-            && !token.IsKnownKeyword()
-        ) {
+        if (token.IsVariable()) {
+            if(_tokens.TryPeek(out var next) && next == Tokens.SET)
+            {
+                _tokens.Dequeue();
+                return new VariableDeclarationNode(token, ParseNode());
+            }
+
             return new VariableNode(token);
         }
 

@@ -6,7 +6,7 @@
     tokenizer: {
         root: [
             // keywords and guards
-            [/\b(?:LET|FUNC|ENDFUNC|GUARD|MATCHES|ELSE|ENDGUARD|IF|THEN|ELSEIF|ENDIF|RETURN|FOR|TO|STEP|ENDFOR|WHILE|ENDWHILE|PRINT)\b/, 'keyword'],
+            [/\b(?:LET|FUNC|ENDFUNC|GUARD|MATCHES|ELSE|ENDGUARD|IF|THEN|ELSEIF|ENDIF|RETURN|FOR|TO|STEP|ENDFOR|WHILE|ENDWHILE|PRINT|REF)\b/, 'keyword'],
 
             // numbers
             [/\b\d+\b/, 'number'],
@@ -21,7 +21,7 @@
             [/[{}()\[\]]/, '@brackets'],
             [/@symbols/, 'delimiter'],
 
-            [/\d*\.\d+([eE][\-+]?\d+)?/, 'number.float']
+            [/\d*\.\d+([eE][\-+]?\d+)?/, 'number.float'],
             [/\d+/, 'number'],
         ],
 

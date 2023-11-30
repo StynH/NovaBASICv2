@@ -8,8 +8,8 @@ using System.Text.RegularExpressions;
 
 namespace NovaBASIC.Language.STL.Functions;
 
-[StlFunction("MATH")]
-public class MathFunction : IStlFunction
+[StlFunction("COMPARISON")]
+public class ComparisonFunction : IStlFunction
 {
     public object? Execute(Interpreter interpreter, AstNode node)
     {
@@ -18,7 +18,7 @@ public class MathFunction : IStlFunction
             var lhs = interpreter.ExecuteNode(binaryNode.Left) as dynamic;
             var rhs = interpreter.ExecuteNode(binaryNode.Right) as dynamic;
 
-            interpreter.Result = binaryNode.Op switch
+            return binaryNode.Op switch
             {
                 Tokens.PLUS => Operations.Add(lhs, rhs),
                 Tokens.MINUS => lhs - rhs,

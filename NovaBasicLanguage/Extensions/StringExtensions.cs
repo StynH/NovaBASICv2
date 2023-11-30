@@ -29,6 +29,14 @@ public static class StringExtensions
         return input.Equals(Tokens.MATCHES_STL);
     }
 
+    public static bool IsVariable(this string input)
+    {
+        return !input.StartsWith('\"')
+            && !input.EndsWith('\"')
+            && !input.IsNumeric()
+            && !input.IsKnownKeyword();
+    }
+
     public static string RemoveCommentLines(this string input)
     {
         return string.Join(Environment.NewLine, input.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None)
