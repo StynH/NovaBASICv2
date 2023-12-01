@@ -52,13 +52,11 @@ public partial class Parser
     {
         var term = ParseBinary();
 
-        if(_tokens.TryPeek(out var next))
+        // Check for ternary operations
+        if (_tokens.TryPeek(out var next) && next.IsOrAnd())
         {
-            if (next.IsOrAnd())
-            {
-                var op = _tokens.Dequeue();
-                term = BalanceNode(new BinaryNode(term, op, ParseTernary()));
-            }
+            var op = _tokens.Dequeue();
+            term = BalanceNode(new BinaryNode(term, op, ParseTernary()));
         }
 
         return term;
@@ -70,15 +68,16 @@ public partial class Parser
 
         if (_tokens.TryPeek(out var next))
         {
-            if (next == Tokens.OPENING_BRACKET)
+            switch (next)
             {
-                term = ParseArrayIndexing(term);
-            }
+                case Tokens.OPENING_BRACKET:
+                    term = ParseArrayIndexing(term);
+                    break;
 
-            if (next.IsArithmetic() || next.IsEqualityCheck() || next.IsSTLOperation())
-            {
-                var op = _tokens.Dequeue();
-                term = BalanceNode(new BinaryNode(term, op, ParseTerm()));
+                case var op when next.IsArithmetic() || next.IsEqualityCheck() || next.IsSTLOperation():
+                    _tokens.Dequeue();
+                    term = BalanceNode(new BinaryNode(term, op, ParseTerm()));
+                    break;
             }
         }
 
@@ -88,48 +87,61 @@ public partial class Parser
     public AstNode ParseTerm()
     {
         var token = _tokens.Dequeue();
-        if (_tokenParsers.TryGetValue(token, out INodeParser? parser))
+
+        // Use parser if available
+        if (_tokenParsers.TryGetValue(token, out var parser))
         {
             return parser.Parse(_tokens, token, this);
         }
 
+        // Handle standard library tokens
         if (StandardLibrary.IsKnownToken(token))
         {
             return ParseStl(token);
         }
 
-        if (token.IsVariable()) {
-            if(_tokens.TryPeek(out var next)){
-                //Function call
-                if (next == Tokens.OPENING_PARENTHESIS)
-                {
-                    return _tokenParsers["FUNC_CALL"].Parse(_tokens, token, this);
-                }
-
-                //Array call
-                if (next == Tokens.OPENING_BRACKET)
-                {
-                    var arrayIndexing = ParseArrayIndexing(new VariableNode(token));
-                    if (_tokens.TryPeek(out var nextToken) && nextToken == Tokens.SET)
-                    {
-                        _tokens.Dequeue(); //Pop '='.
-                        return new ArrayAssignNode(arrayIndexing, ParseTernary());
-                    }
-                    return arrayIndexing;
-                }
-
-                //Reassignment
-                if (next == Tokens.SET)
-                {
-                    _tokens.Dequeue();
-                    return new VariableDeclarationNode(token, ParseTernary());
-                }
-            }
-
-            return new VariableNode(token);
+        // Process variable tokens
+        if (token.IsVariable())
+        {
+            return ProcessVariableToken(token);
         }
 
+        // Default to constants parsing
         return _tokenParsers["CONSTANTS"].Parse(_tokens, token, this);
+    }
+
+    private AstNode ProcessVariableToken(string token)
+    {
+        if (_tokens.TryPeek(out var next))
+        {
+            switch (next)
+            {
+                case Tokens.OPENING_PARENTHESIS:
+                    return _tokenParsers["FUNC_CALL"].Parse(_tokens, token, this);
+
+                case Tokens.OPENING_BRACKET:
+                    return ProcessArrayCallOrAssignment(token);
+
+                case Tokens.SET:
+                    _tokens.Dequeue();
+                    return new VariableDeclarationNode(token, ParseTernary());
+            }
+        }
+
+        return new VariableNode(token);
+    }
+
+    private AstNode ProcessArrayCallOrAssignment(string token)
+    {
+        var arrayIndexing = ParseArrayIndexing(new VariableNode(token));
+
+        if (_tokens.TryPeek(out var nextToken) && nextToken == Tokens.SET)
+        {
+            _tokens.Dequeue(); // Pop '='.
+            return new ArrayAssignNode(arrayIndexing, ParseTernary());
+        }
+
+        return arrayIndexing;
     }
 
     private ArrayIndexingNode ParseArrayIndexing(AstNode term)
