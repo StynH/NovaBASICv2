@@ -31,31 +31,31 @@ public static partial class Tokens
     public const string AND = "&&";
 
     // Syntax
-    public const string IF = "IF";
-    public const string THEN = "THEN";
-    public const string RETURN = "RETURN";
-    public const string ENDIF = "ENDIF";
-    public const string FUNC = "FUNC";
-    public const string END_FUNC = "ENDFUNC";
-    public const string GUARD = "GUARD";
-    public const string END_GUARD = "ENDGUARD";
-    public const string ELSEIF = "ELSEIF";
-    public const string ELSE = "ELSE";
-    public const string REF = "REF";
+    public const string KEYWORD_IF = "IF";
+    public const string KEYWORD_THEN = "THEN";
+    public const string KEYWORD_RETURN = "RETURN";
+    public const string KEYWORD_ENDIF = "ENDIF";
+    public const string KEYWORD_FUNC = "FUNC";
+    public const string KEYWORD_END_FUNC = "ENDFUNC";
+    public const string KEYWORD_GUARD = "GUARD";
+    public const string KEYWORD_END_GUARD = "ENDGUARD";
+    public const string KEYWORD_ELSEIF = "ELSEIF";
+    public const string KEYWORD_ELSE = "ELSE";
+    public const string KEYWORD_REF = "REF";
 
     public const string DECLARATION_PATTERN = "[a-zA-Z_$][a-zA-Z0-9_$]*";
     public const string OPENING_PARENTHESIS = "(";
     public const string CLOSING_PARENTHESIS = ")";
 
-    public const string LET = "LET";
-    public const string IMMUTABLE = "IMMUTABLE";
-    public const string WHILE = "WHILE";
-    public const string FOR = "FOR";
-    public const string TO = "TO";
-    public const string STEP = "STEP";
-    public const string NEXT = "NEXT";
-    public const string GOTO = "GOTO";
-    public const string BY = "BY";
+    public const string KEYWORD_LET = "LET";
+    public const string KEYWORD_IMMUTABLE = "IMMUTABLE";
+    public const string KEYWORD_WHILE = "WHILE";
+    public const string KEYWORD_FOR = "FOR";
+    public const string KEYWORD_TO = "TO";
+    public const string KEYWORD_STEP = "STEP";
+    public const string KEYWORD_NEXT = "NEXT";
+    public const string KEYWORD_GOTO = "GOTO";
+    public const string KEYWORD_BY = "BY";
 
     public static string BuildRegexPattern()
     {
@@ -69,5 +69,22 @@ public static partial class Tokens
                      });
 
         return string.Join("|", fields.Select(f => f.Name.EndsWith("_PATTERN") ? f.Value : Regex.Escape(f.Value!)));
+    }
+
+    public static IList<string> GetKeywords()
+    {
+        var fields = typeof(Tokens)
+             .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly)
+             .Where(field => field.FieldType == typeof(string))
+             .Select(field => new
+             {
+                 field.Name,
+                 Value = field.GetValue(null) as string
+             });
+
+        return fields
+            .Where(f => f.Name.StartsWith("KEYWORD_") || f.Name.EndsWith("_STL"))
+            .Select(f => f.Value!)
+            .ToList();
     }
 }

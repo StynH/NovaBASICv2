@@ -5,7 +5,7 @@ using NovaBASIC.Language.Parsing.Parsers.Interface;
 
 namespace NovaBASIC.Language.Parsing.Parsers;
 
-[NodeParser(Tokens.LET)]
+[NodeParser(Tokens.KEYWORD_LET)]
 public class VariableDeclarationParser : INodeParser
 {
     public AstNode Parse(Queue<string> tokens, string currentToken, Parser parser)

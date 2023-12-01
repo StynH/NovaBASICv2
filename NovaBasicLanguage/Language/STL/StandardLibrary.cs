@@ -33,7 +33,7 @@ public class StandardLibrary
     {
         foreach(var variable in StlVariables.STANDARD_VARIABLES)
         {
-            memoryContext.Assign(variable);
+            memoryContext.AssignVariable(variable);
         }
     }
 

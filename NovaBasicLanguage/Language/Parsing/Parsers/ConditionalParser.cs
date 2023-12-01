@@ -6,7 +6,7 @@ using NovaBASIC.Language.Parsing.Parsers.Interface;
 
 namespace NovaBASIC.Language.Parsing.Parsers;
 
-[NodeParser(Tokens.IF)]
+[NodeParser(Tokens.KEYWORD_IF)]
 public class ConditionalParser : INodeParser
 {
     public AstNode Parse(Queue<string> tokens, string currentToken, Parser parser)
@@ -16,10 +16,10 @@ public class ConditionalParser : INodeParser
 
     private static ConditionalNode ParseConditional(Queue<string> tokens, string currentToken, Parser parser)
     {
-        var condition = currentToken != Tokens.ELSE ? parser.ParseTernary() : new ConstantNode<bool>(true);
-        if (tokens.Peek() != Tokens.THEN)
+        var condition = currentToken != Tokens.KEYWORD_ELSE ? parser.ParseTernary() : new ConstantNode<bool>(true);
+        if (tokens.Peek() != Tokens.KEYWORD_THEN)
         {
-            throw new MalformedStatementException(Tokens.IF, Tokens.THEN);
+            throw new MalformedStatementException(Tokens.KEYWORD_IF, Tokens.KEYWORD_THEN);
         }
 
         tokens.Dequeue(); //Pop 'THEN'.
@@ -29,17 +29,17 @@ public class ConditionalParser : INodeParser
         AstNode? elseNode = null;
         while (tokens.Count > 0)
         {
-            if(tokens.Peek() == Tokens.ELSE || tokens.Peek() == Tokens.ELSEIF)
+            if(tokens.Peek() == Tokens.KEYWORD_ELSE || tokens.Peek() == Tokens.KEYWORD_ELSEIF)
             {
                 var token = tokens.Dequeue();
                 elseNode = ParseConditional(tokens, token, parser);
             }
 
-            if(tokens.Peek() == Tokens.ENDIF && (currentToken == Tokens.ELSE || currentToken == Tokens.ELSEIF))
+            if(tokens.Peek() == Tokens.KEYWORD_ENDIF && (currentToken == Tokens.KEYWORD_ELSE || currentToken == Tokens.KEYWORD_ELSEIF))
             {
                 return new ConditionalNode(condition, body, elseNode);
             }
-            else if(tokens.Peek() == Tokens.ENDIF)
+            else if(tokens.Peek() == Tokens.KEYWORD_ENDIF)
             {
                 tokens.Dequeue(); //Pop 'ENDIF'.
                 terminatedCorrectly = true;
@@ -51,7 +51,7 @@ public class ConditionalParser : INodeParser
 
         if (!terminatedCorrectly)
         {
-            throw new MalformedStatementException(currentToken, Tokens.ENDIF);
+            throw new MalformedStatementException(currentToken, Tokens.KEYWORD_ENDIF);
         }
 
         return new ConditionalNode(condition, body, elseNode);

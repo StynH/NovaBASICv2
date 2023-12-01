@@ -9,13 +9,13 @@ using NovaBasicLanguage.Language.Parsing.Nodes;
 
 namespace NovaBasicLanguage.Language.Parsing.Parsers;
 
-[NodeParser(Tokens.REF)]
+[NodeParser(Tokens.KEYWORD_REF)]
 public class ReferenceParser : INodeParser
 {
     public AstNode Parse(Queue<string> tokens, string currentToken, Parser parser)
     {
         if(tokens.TryPeek(out var token) && !token.IsVariable()) {
-            throw new WrongUsageException(Tokens.REF, "variables");
+            throw new WrongUsageException(Tokens.KEYWORD_REF, "variables");
         }
 
         return new ReferenceNode(token!);

@@ -1,6 +1,7 @@
 ﻿using NovaBASIC.Language.Interpreting.Interface;
 using NovaBASIC.Language.Parsing.Nodes;
 using NovaBASIC.Language.Runtime;
+using NovaBasicLanguage.Language.Exceptions;
 using NovaBasicLanguage.Language.Parsing.Nodes;
 using NovaBasicLanguage.Language.Runtime;
 using System.Reflection;
@@ -10,6 +11,8 @@ namespace NovaBASIC.Language.Interpreting;
 public partial class Interpreter : INodeVisitor
 {
     private RuntimeContext _runtimeContext = new();
+
+    private Dictionary<Type, MethodInfo> _methodsCache = new Dictionary<Type, MethodInfo>();
 
     private bool _returnIsCalled;
 
@@ -25,19 +28,51 @@ public partial class Interpreter : INodeVisitor
 
     public void Visit<T>(T node) where T : AstNode
     {
-        var method = ResolveVisitMethod(node.GetType());
+        Type nodeType = node.GetType();
+        MethodInfo? method;
 
-        if (method != null)
+        if (!_methodsCache.TryGetValue(nodeType, out method))
         {
-            if (node.GetType().GetGenericArguments().Length > 0)
+            method = ResolveVisitMethod(nodeType);
+            if (method != null)
             {
-                method = method.MakeGenericMethod([node.GetType().GetGenericArguments()[0]]);
+                if (nodeType.GetGenericArguments().Length > 0)
+                {
+                    method = method.MakeGenericMethod(nodeType.GetGenericArguments()[0]);
+                }
+                _methodsCache[nodeType] = method;
             }
-            method.Invoke(this, new object[] { node });
+            else
+            {
+                throw new MissingMethodException("No Visit method found for type " + nodeType);
+            }
         }
-        else
+
+        method.Invoke(this, new object[] { node });
+    }
+
+    public void InitializeMethodCache()
+    {
+        var visitMethods = GetType()
+                           .GetMethods()
+                           .Where(m => m.Name == "Visit" && m.GetParameters().Length == 1
+                                           && typeof(AstNode).IsAssignableFrom(m.GetParameters()[0].ParameterType));
+
+        foreach (var method in visitMethods)
         {
-            throw new MissingMethodException("No Visit method found for type " + node.GetType());
+            var paramType = method.GetParameters()[0].ParameterType;
+            MethodInfo methodToCache;
+
+            if (method.IsGenericMethod)
+            {
+                methodToCache = method.GetGenericMethodDefinition();
+            }
+            else
+            {
+                methodToCache = method;
+            }
+
+            _methodsCache[paramType] = methodToCache;
         }
     }
 
@@ -71,10 +106,15 @@ public partial class Interpreter : INodeVisitor
         Result = node.Value;
     }
 
+    public void Visit(NullNode node)
+    {
+        Result = null;
+    }
+
     public void Visit(VariableNode node)
     {
         //TODO: The '.Value' thing should be different.
-        Result = _runtimeContext.Get(node.Name).Value;
+        Result = _runtimeContext.GetVariable(node.Name).Value;
     }
 
     public void Visit(VariableDeclarationNode node)
@@ -89,13 +129,70 @@ public partial class Interpreter : INodeVisitor
             return;
         }
 
-        _runtimeContext.Assign(name, value, node.IsImmutable);
+        _runtimeContext.AssignVariable(name, value, node.IsImmutable);
         Result = null;
     }
 
     public void Visit(ReferenceNode node)
     {
         Result = new MemoryReference(node.VariableName);
+    }
+
+    public void Visit(FunctionDeclarationNode node)
+    {
+        _runtimeContext.AssignFunction(node.Name, node.Parameters, node.Body);
+        Result = null;
+    }
+
+    public void Visit(FunctionCallNode node)
+    {
+        var func = _runtimeContext.GetFunction(node.Name);
+        CreateScope();
+
+        //Create scoped parameters.
+        for(var i = 0; i < func.Parameters.Length; ++i) {
+            var param = func.Parameters[i];
+            if(node.Parameters.Length - 1 < i)
+            {
+                throw new MissingParameterException(func.Name, param);
+            }
+
+            var value = ExecuteNode(node.Parameters[i]);
+            if(value is MemoryReference memoryReference)
+            {
+                _runtimeContext.AssignReference(param, memoryReference);
+                continue;
+            }
+
+            _runtimeContext.AssignVariable(param, value, false);
+        }
+
+        //Execute function
+        foreach (var bodyNode in func.Body)
+        {
+            ExecuteNode(bodyNode);
+            if (_returnIsCalled)
+            {
+                break;
+            }
+        }
+
+        if (_returnIsCalled)
+        {
+            _returnIsCalled = false;
+        }
+        else
+        {
+            Result = null;
+        }
+
+        PopScope();
+    }
+
+    public void Visit(ReturnNode node)
+    {
+        _returnIsCalled = true;
+        Result = ExecuteNode(node.ReturnValue);
     }
 
     public void Visit(ConditionalNode node)

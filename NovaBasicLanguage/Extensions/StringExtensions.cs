@@ -45,7 +45,7 @@ public static class StringExtensions
         return !input.StartsWith('\"')
             && !input.EndsWith('\"')
             && !input.IsNumeric()
-            && !input.IsKnownKeyword();
+            && !input.IsPrimitive();
     }
 
     public static string RemoveCommentLines(this string input)
@@ -56,8 +56,17 @@ public static class StringExtensions
         );
     }
 
-    public static bool IsKnownKeyword(this string input)
+    public static bool IsPrimitive(this string input)
     {
-        return input.Equals(Tokens.BOOL_TRUE) || input.Equals(Tokens.BOOL_FALSE) || input.Equals(Tokens.NULL);
+        return input.Equals(Tokens.BOOL_TRUE) 
+            || input.Equals(Tokens.BOOL_FALSE) 
+            || input.Equals(Tokens.NULL);
+    }
+
+    public static bool IsKeyword(this string input)
+    {
+        return Tokens
+            .GetKeywords()
+            .Contains(input);
     }
 }

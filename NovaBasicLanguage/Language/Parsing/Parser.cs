@@ -92,7 +92,14 @@ public partial class Parser
         }
 
         if (token.IsVariable()) {
-            if(_tokens.TryPeek(out var next) && next == Tokens.SET)
+            //Function call
+            if(_tokens.TryPeek(out var funcToken) && funcToken == Tokens.OPENING_PARENTHESIS)
+            {
+                return _tokenParsers["FUNC_CALL"].Parse(_tokens, token, this);
+            }
+
+            //Reassignment
+            if(_tokens.TryPeek(out var setToken) && setToken == Tokens.SET)
             {
                 _tokens.Dequeue();
                 return new VariableDeclarationNode(token, ParseTernary());
