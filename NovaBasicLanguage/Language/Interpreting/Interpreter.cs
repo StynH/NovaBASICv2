@@ -124,11 +124,12 @@ public partial class Interpreter : INodeVisitor
         var name = node.Name;
         var value = ExecuteNode(node.Assignment);
 
-        if(value is MemoryReference reference)
+        switch (value)
         {
-            _runtimeContext.AssignReference(name, reference);
-            Result = null;
-            return;
+            case MemoryReference memoryReference:
+                _runtimeContext.AssignReference(name, memoryReference);
+                Result = null;
+                return;
         }
 
         _runtimeContext.AssignVariable(name, value, node.IsImmutable);
@@ -138,6 +139,21 @@ public partial class Interpreter : INodeVisitor
     public void Visit(ReferenceNode node)
     {
         Result = new MemoryReference(node.VariableName);
+    }
+
+    public void Visit(ArrayReferenceNode node)
+    {
+        Result = new MemoryCollectionReference(node.VariableName, NodeToIndexer(node.Index));
+    }
+
+    private Indexer NodeToIndexer(ArrayIndexingNode node)
+    {
+        if (node.Sub is not null)
+        {
+            return new Indexer((int)ExecuteNode(node.Index)!, NodeToIndexer(node.Sub));
+        }
+
+        return new Indexer((int)ExecuteNode(node.Index)!);
     }
 
     public void Visit(FunctionDeclarationNode node)

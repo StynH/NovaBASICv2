@@ -18,6 +18,12 @@ public class RuntimeContext(RuntimeContext? parent = null)
         if (_references.TryGetValue(variableName, out var reference))
         {
             var memoryItem = GetVariable(reference.VariableName);
+            if (reference is MemoryCollectionReference memoryCollectionReference)
+            {
+                AssignCollectionIndexedValue(memoryItem, memoryCollectionReference, value);
+                return;
+            }
+
             AssignVariable(memoryItem.Name, value, memoryItem.IsImmutable);
             return;
         }
@@ -54,6 +60,25 @@ public class RuntimeContext(RuntimeContext? parent = null)
         }
 
         _variables[variableName] = new MemoryItem(variableName, value, isImmutable);
+    }
+
+    private static void AssignCollectionIndexedValue(MemoryItem memoryItem, MemoryCollectionReference memoryCollectionReference, object? value)
+    {
+        var variable = memoryItem.Value as dynamic;
+        var indexer = memoryCollectionReference.Index;
+
+        do
+        {
+            if (indexer.Sub is null)
+            {
+                variable![indexer.Index] = value;
+                break;
+            }
+
+            variable = variable![indexer.Index];
+            indexer = indexer.Sub;
+        } 
+        while (indexer is not null);
     }
 
     public void AssignVariable(MemoryItem memoryItem)
