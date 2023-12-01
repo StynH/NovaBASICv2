@@ -6,7 +6,7 @@
     tokenizer: {
         root: [
             // keywords and guards
-            [/\b(?:LET|IMMUTABLE|ENDFUNC|GUARD|MATCHES|ELSE|ENDGUARD|IF|THEN|ELSEIF|ENDIF|RETURN|FOR|TO|STEP|ENDFOR|WHILE|ENDWHILE|PRINT|REF|FUNC|ENDFUNC|NEW|null|true|false)\b/, 'keyword'],
+            [/\b(?:LET|IMMUTABLE|ENDFUNC|GUARD|MATCHES|ELSE|ENDGUARD|IF|THEN|ELSEIF|ENDIF|RETURN|FOR|TO|STEP|ENDFOR|WHILE|ENDWHILE|PRINT|COUNT|REF|FUNC|ENDFUNC|NEW|null|true|false)\b/, 'keyword'],
 
             // numbers
             [/\b\d+\b/, 'number'],

@@ -5,7 +5,6 @@ using NovaBASIC.Language.Parsing.Parsers.Attribute;
 using NovaBASIC.Language.Parsing.Parsers.Interface;
 using NovaBASIC.Language.STL;
 using NovaBasicLanguage.Language.Parsing.Nodes.Array;
-using System;
 
 namespace NovaBASIC.Language.Parsing;
 
@@ -88,25 +87,21 @@ public partial class Parser
     {
         var token = _tokens.Dequeue();
 
-        // Use parser if available
         if (_tokenParsers.TryGetValue(token, out var parser))
         {
             return parser.Parse(_tokens, token, this);
         }
 
-        // Handle standard library tokens
         if (StandardLibrary.IsKnownToken(token))
         {
             return ParseStl(token);
         }
 
-        // Process variable tokens
         if (token.IsVariable())
         {
             return ProcessVariableToken(token);
         }
 
-        // Default to constants parsing
         return _tokenParsers["CONSTANTS"].Parse(_tokens, token, this);
     }
 

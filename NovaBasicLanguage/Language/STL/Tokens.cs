@@ -10,7 +10,7 @@ public static partial class Tokens
     public const string PRINT_STL = "PRINT";
     public const string MATCHES_STL = "MATCHES";
     public const string ARRAY_RESIZE_STL = "ARRAY_RESIZE";
-    public const string LENGTH_STL = "LEN";
+    public const string COUNT_STL = "COUNT";
 
     // Math
     public const string RANDOM_STL = "RAND";
