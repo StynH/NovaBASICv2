@@ -13,7 +13,7 @@ namespace NovaBasicLanguage.Language.Parsing.Parsers
     {
         public AstNode Parse(Queue<string> tokens, string currentToken, Parser parser)
         {
-            if(tokens.TryPeek(out var next) && next.IsKeyword()){
+            if(tokens.TryPeek(out var next) && next != Tokens.KEYWORD_NEW && next.IsKeyword()){
                 return new ReturnNode(new NullNode());
             }
             return new ReturnNode(parser.ParseTernary());

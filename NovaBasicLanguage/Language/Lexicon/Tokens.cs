@@ -31,6 +31,7 @@ public static partial class Tokens
     public const string AND = "&&";
 
     // Syntax
+    public const string KEYWORD_NEW = "NEW";
     public const string KEYWORD_IF = "IF";
     public const string KEYWORD_THEN = "THEN";
     public const string KEYWORD_RETURN = "RETURN";

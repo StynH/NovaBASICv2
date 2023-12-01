@@ -4,6 +4,8 @@ using NovaBASIC.Language.Parsing.Nodes;
 using NovaBASIC.Language.Parsing.Parsers.Attribute;
 using NovaBASIC.Language.Parsing.Parsers.Interface;
 using NovaBASIC.Language.STL;
+using NovaBasicLanguage.Language.Parsing.Nodes.Array;
+using System;
 
 namespace NovaBASIC.Language.Parsing;
 
@@ -68,6 +70,11 @@ public partial class Parser
 
         if (_tokens.TryPeek(out var next))
         {
+            if (next == Tokens.OPENING_BRACKET)
+            {
+                term = ParseArrayIndexing(term);
+            }
+
             if (next.IsArithmetic() || next.IsEqualityCheck() || next.IsSTLOperation())
             {
                 var op = _tokens.Dequeue();
@@ -78,7 +85,7 @@ public partial class Parser
         return term;
     }
 
-    private AstNode ParseTerm()
+    public AstNode ParseTerm()
     {
         var token = _tokens.Dequeue();
         if (_tokenParsers.TryGetValue(token, out INodeParser? parser))
@@ -92,23 +99,54 @@ public partial class Parser
         }
 
         if (token.IsVariable()) {
-            //Function call
-            if(_tokens.TryPeek(out var funcToken) && funcToken == Tokens.OPENING_PARENTHESIS)
-            {
-                return _tokenParsers["FUNC_CALL"].Parse(_tokens, token, this);
-            }
+            if(_tokens.TryPeek(out var next)){
+                //Function call
+                if (next == Tokens.OPENING_PARENTHESIS)
+                {
+                    return _tokenParsers["FUNC_CALL"].Parse(_tokens, token, this);
+                }
 
-            //Reassignment
-            if(_tokens.TryPeek(out var setToken) && setToken == Tokens.SET)
-            {
-                _tokens.Dequeue();
-                return new VariableDeclarationNode(token, ParseTernary());
+                //Array call
+                if (next == Tokens.OPENING_BRACKET)
+                {
+                    var arrayIndexing = ParseArrayIndexing(new VariableNode(token));
+                    if (_tokens.TryPeek(out var nextToken) && nextToken == Tokens.SET)
+                    {
+                        _tokens.Dequeue(); //Pop '='.
+                        return new ArrayAssignNode(arrayIndexing, ParseTernary());
+                    }
+                    return arrayIndexing;
+                }
+
+                //Reassignment
+                if (next == Tokens.SET)
+                {
+                    _tokens.Dequeue();
+                    return new VariableDeclarationNode(token, ParseTernary());
+                }
             }
 
             return new VariableNode(token);
         }
 
         return _tokenParsers["CONSTANTS"].Parse(_tokens, token, this);
+    }
+
+    private ArrayIndexingNode ParseArrayIndexing(AstNode term)
+    {
+        _tokens.Dequeue(); //Pop '['.
+        var index = ParseTernary();
+        _tokens.Dequeue(); //Pop ']'.
+
+        if (_tokens.TryPeek(out var next))
+        {
+            if(next == Tokens.OPENING_BRACKET)
+            {
+                return new ArrayIndexingNode(term, index, ParseArrayIndexing(term));
+            }
+        }
+
+        return new ArrayIndexingNode(term, index, null);
     }
 
     private static AstNode BalanceNode(AstNode node)

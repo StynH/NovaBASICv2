@@ -2,7 +2,9 @@
 using NovaBASIC.Language.Parsing.Nodes;
 using NovaBASIC.Language.Runtime;
 using NovaBasicLanguage.Language.Exceptions;
+using NovaBasicLanguage.Language.Helpers;
 using NovaBasicLanguage.Language.Parsing.Nodes;
+using NovaBasicLanguage.Language.Parsing.Nodes.Array;
 using NovaBasicLanguage.Language.Runtime;
 using System.Reflection;
 
@@ -215,6 +217,68 @@ public partial class Interpreter : INodeVisitor
         {
             node.Else?.Accept(this);
         }
+        Result = null;
+    }
+
+    public void Visit(NewInstanceNode node)
+    {
+        var value = ExecuteNode(node.Operand);
+        Result = value;
+    }
+
+    public void Visit(ArrayDeclarationNode node)
+    {
+        var dimensions = new List<int>();
+        var arrayNode = node;
+
+        do
+        {
+            dimensions.Add((int)ExecuteNode(arrayNode.Size)!);
+            arrayNode = arrayNode.Sub;
+        }
+        while (arrayNode is not null);
+
+        Result = ArrayHelper.CreateJaggedArray([.. dimensions], 0);
+    }
+
+    public void Visit(ArrayIndexingNode node)
+    {
+        var array = node;
+        var variable = ExecuteNode(node.Operand) as dynamic; //Expected operand is of array type.
+
+        var result = variable;
+        do
+        {
+            var index = (int)ExecuteNode(array.Index)!;
+            result = result![index!];
+            array = array.Sub;
+        }
+        while (array is not null);
+
+        Result = result;
+    }
+
+    public void Visit(ArrayAssignNode node)
+    {
+        var currentIndex = node.Index;
+        var variable = ExecuteNode(currentIndex.Operand) as dynamic; //Expected operand is of array type.
+        var value = ExecuteNode(node.Value);
+
+        do
+        {
+            var index = (int)ExecuteNode(currentIndex.Index)!;
+            if (currentIndex.Sub is null)
+            {
+                variable![index!] = value;
+            }
+            else
+            {
+                variable = variable![index!];
+            }
+            currentIndex = currentIndex.Sub;
+        }
+        while (currentIndex is not null);
+
         Result = null;
     }
 
