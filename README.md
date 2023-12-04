@@ -3,6 +3,24 @@
 
 Second implementation of my own programming language called NovaBASIC. Made in C# .NET 8, using Blazor as front-end.
 
+## Examples
+Example of Fibonnaci in NovaBasic.
+```
+FUNC fibonacci(n)
+    IF n <= 1 THEN
+        RETURN n
+    ENDIF
+    RETURN fibonacci(n - 1) + fibonacci(n - 2)
+ENDFUNC
+
+LET num = 10
+PRINT "Fibonacci sequence up to " + num + ":"
+
+FOR LET i = 0 TO num + 1
+    PRINT fibonacci(i)
+ENDFOR
+```
+
 Example of Quick Sort in NovaBasic.
 ```
 FUNC printArray(arrRef)
