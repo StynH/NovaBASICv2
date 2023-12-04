@@ -3,6 +3,52 @@
 
 Second implementation of my own programming language called NovaBASIC. Made in C# .NET 8, using Blazor as front-end.
 
+## Examples
+Example of Fibonacci in NovaBasic.
+```
+FUNC fibonacci(n)
+    IF n <= 1 THEN
+        RETURN n
+    ENDIF
+    RETURN fibonacci(n - 1) + fibonacci(n - 2)
+ENDFUNC
+
+LET num = 10
+PRINT "Fibonacci sequence up to " + num + ":"
+
+FOR LET i = 0 TO num + 1
+    PRINT fibonacci(i)
+ENDFOR
+```
+
+Example of Sieve of Eratosthenes in NovaBasic.
+```
+FUNC sieveOfEratosthenes(limit)
+    LET prime = NEW [limit + 1]
+    FOR LET i = 2 TO limit
+        prime[i] = true
+    ENDFOR
+
+    FOR LET p = 2 TO limit
+        IF prime[p] THEN
+            FOR LET i = p * p TO limit STEP p
+                prime[i] = false
+            ENDFOR
+        ENDIF
+    ENDFOR
+
+    PRINT "Prime numbers up to " + limit + ":"
+    FOR LET i = 2 TO limit
+        IF prime[i] THEN
+            PRINT i
+        ENDIF
+    ENDFOR
+ENDFUNC
+
+LET n = 30
+sieveOfEratosthenes(n)
+```
+
 Example of Quick Sort in NovaBasic.
 ```
 FUNC printArray(arrRef)
