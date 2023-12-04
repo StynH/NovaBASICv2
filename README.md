@@ -4,7 +4,7 @@
 Second implementation of my own programming language called NovaBASIC. Made in C# .NET 8, using Blazor as front-end.
 
 ## Examples
-Example of Fibonnaci in NovaBasic.
+Example of Fibonacci in NovaBasic.
 ```
 FUNC fibonacci(n)
     IF n <= 1 THEN
