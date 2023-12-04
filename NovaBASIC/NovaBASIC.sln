@@ -5,7 +5,9 @@ VisualStudioVersion = 17.8.34316.72
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NovaBasic", "NovaBasic.csproj", "{66643C6E-7670-4008-A8DD-4FE70F155808}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NovaBasicLanguage", "..\NovaBasicLanguage\NovaBasicLanguage.csproj", "{5BA9AE7E-B668-453F-8839-B544C4064778}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NovaBasicLanguage", "..\NovaBasicLanguage\NovaBasicLanguage.csproj", "{5BA9AE7E-B668-453F-8839-B544C4064778}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NovaBasicDesktopRunner", "..\NovaBasicDesktopRunner\NovaBasicDesktopRunner.csproj", "{DC0DB2D3-8F6E-4659-88C7-44EAB65549A4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{5BA9AE7E-B668-453F-8839-B544C4064778}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5BA9AE7E-B668-453F-8839-B544C4064778}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5BA9AE7E-B668-453F-8839-B544C4064778}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC0DB2D3-8F6E-4659-88C7-44EAB65549A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC0DB2D3-8F6E-4659-88C7-44EAB65549A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC0DB2D3-8F6E-4659-88C7-44EAB65549A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC0DB2D3-8F6E-4659-88C7-44EAB65549A4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

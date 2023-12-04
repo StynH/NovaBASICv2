@@ -10,6 +10,7 @@ public class RuntimeContext(bool isGlobal = false, bool isIsolated = false, Runt
     private Dictionary<string, MemoryItem> _variables = [];
     private Dictionary<string, MemoryReference> _references = [];
     private Dictionary<string, MemoryFunction> _functions = [];
+    private Dictionary<string, MemoryStruct> _structDefinitions = [];
 
     private readonly RuntimeContext? _parentRuntimeContext = parent; // Parent RuntimeContext for nested scopes
 
