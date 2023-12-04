@@ -24,7 +24,7 @@ public partial class Interpreter : INodeVisitor
 
     public void RunProgram(IList<AstNode> nodes)
     {
-        foreach(var node in nodes)
+        foreach (var node in nodes)
         {
             ExecuteNode(node);
         }
@@ -93,7 +93,7 @@ public partial class Interpreter : INodeVisitor
             {
                 return method;
             }
-            
+
             if (paramType.IsGenericType && nodeType.IsGenericType &&
                 paramType.GetGenericTypeDefinition() == typeof(ConstantNode<>) &&
                 nodeType.GetGenericTypeDefinition() == typeof(ConstantNode<>))
@@ -169,9 +169,9 @@ public partial class Interpreter : INodeVisitor
         CreateScope(true);
 
         //Create scoped parameters.
-        for(var i = 0; i < func.Parameters.Length; ++i) {
+        for (var i = 0; i < func.Parameters.Length; ++i) {
             var param = func.Parameters[i];
-            if(node.Parameters.Length - 1 < i)
+            if (node.Parameters.Length - 1 < i)
             {
                 throw new MissingParameterException(func.Name, param);
             }
@@ -205,18 +205,19 @@ public partial class Interpreter : INodeVisitor
         {
             _returnIsCalled = false;
         }
-        else
-        {
-            Result = null;
-        }
 
         PopScope();
     }
 
     public void Visit(ReturnNode node)
     {
-        _returnIsCalled = true;
         Result = ExecuteNode(node.ReturnValue);
+        _returnIsCalled = true;
+    }
+
+    public void Visit(BreakNode _)
+    {
+        _breakIsCalled = true;
     }
 
     public void Visit(ConditionalNode node)
@@ -229,7 +230,6 @@ public partial class Interpreter : INodeVisitor
                 ExecuteNode(expr);
                 if (_returnIsCalled)
                 {
-                    _returnIsCalled = false;
                     break;
                 }
             }
@@ -239,7 +239,6 @@ public partial class Interpreter : INodeVisitor
         {
             node.Else?.Accept(this);
         }
-        Result = null;
     }
 
     public void Visit(ForLoopNode node)
@@ -287,6 +286,11 @@ public partial class Interpreter : INodeVisitor
             conditionMemoryItem.Value = Convert.ToInt32(conditionMemoryItem.Value) + stepSize;
         }
 
+        if (_breakIsCalled)
+        {
+            _breakIsCalled = false;
+        }
+
         PopScope();
     }
 
@@ -312,6 +316,11 @@ public partial class Interpreter : INodeVisitor
             }
 
             condition = (bool)ExecuteNode(node.Condition)!;
+        }
+
+        if (_breakIsCalled)
+        {
+            _breakIsCalled = false;
         }
 
         PopScope();

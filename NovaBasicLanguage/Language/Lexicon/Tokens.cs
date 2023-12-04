@@ -56,7 +56,7 @@ public static partial class Tokens
     public const string KEYWORD_END_FOR = "ENDFOR";
     public const string KEYWORD_TO = "TO";
     public const string KEYWORD_STEP = "STEP";
-    public const string KEYWORD_NEXT = "NEXT";
+    public const string KEYWORD_BREAK = "BREAK";
     public const string KEYWORD_GOTO = "GOTO";
     public const string KEYWORD_BY = "BY";
 
