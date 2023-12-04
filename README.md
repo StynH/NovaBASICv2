@@ -30,7 +30,7 @@ FUNC sieveOfEratosthenes(limit)
     ENDFOR
 
     FOR LET p = 2 TO limit
-        IF prime[p] == true THEN
+        IF prime[p] THEN
             FOR LET i = p * p TO limit STEP p
                 prime[i] = false
             ENDFOR
@@ -39,7 +39,7 @@ FUNC sieveOfEratosthenes(limit)
 
     PRINT "Prime numbers up to " + limit + ":"
     FOR LET i = 2 TO limit
-        IF prime[i] == true THEN
+        IF prime[i] THEN
             PRINT i
         ENDIF
     ENDFOR
