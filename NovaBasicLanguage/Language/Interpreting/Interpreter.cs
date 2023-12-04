@@ -166,7 +166,7 @@ public partial class Interpreter : INodeVisitor
     public void Visit(FunctionCallNode node)
     {
         var func = _runtimeContext.GetFunction(node.Name);
-        CreateScope();
+        CreateScope(true);
 
         //Create scoped parameters.
         for(var i = 0; i < func.Parameters.Length; ++i) {

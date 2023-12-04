@@ -4,6 +4,8 @@ using NovaBASIC.Language.Parsing.Nodes;
 using NovaBASIC.Language.Parsing.Parsers.Attribute;
 using NovaBASIC.Language.Parsing.Parsers.Interface;
 using NovaBASIC.Language.STL;
+using NovaBasicLanguage.Extensions;
+using NovaBasicLanguage.Language.Parsing.Nodes;
 using NovaBasicLanguage.Language.Parsing.Nodes.Array;
 
 namespace NovaBASIC.Language.Parsing;
@@ -44,6 +46,7 @@ public partial class Parser
         {
             nodes.Add(ParseTernary());
         }
+        nodes.MoveToFront((node) => node is FunctionDeclarationNode);
         return nodes;
     }
 
