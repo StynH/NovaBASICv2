@@ -21,6 +21,34 @@ FOR LET i = 0 TO num + 1
 ENDFOR
 ```
 
+Example of Sieve of Eratosthenes in NovaBasic.
+```
+FUNC sieveOfEratosthenes(limit)
+    LET prime = NEW [limit + 1]
+    FOR LET i = 2 TO limit
+        prime[i] = true
+    ENDFOR
+
+    FOR LET p = 2 TO limit
+        IF prime[p] == true THEN
+            FOR LET i = p * p TO limit STEP p
+                prime[i] = false
+            ENDFOR
+        ENDIF
+    ENDFOR
+
+    PRINT "Prime numbers up to " + limit + ":"
+    FOR LET i = 2 TO limit
+        IF prime[i] == true THEN
+            PRINT i
+        ENDIF
+    ENDFOR
+ENDFUNC
+
+LET n = 30
+sieveOfEratosthenes(n)
+```
+
 Example of Quick Sort in NovaBasic.
 ```
 FUNC printArray(arrRef)
