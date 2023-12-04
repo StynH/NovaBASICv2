@@ -3,6 +3,7 @@ using NovaBASIC.Language.Lexicon;
 using NovaBASIC.Language.Parsing.Nodes;
 using NovaBASIC.Language.Parsing.Parsers.Attribute;
 using NovaBASIC.Language.Parsing.Parsers.Interface;
+using NovaBasicLanguage.Extensions;
 
 namespace NovaBASIC.Language.Parsing.Parsers;
 
@@ -17,7 +18,7 @@ public class ConditionalParser : INodeParser
     private static ConditionalNode ParseConditional(Queue<string> tokens, string currentToken, Parser parser)
     {
         var condition = currentToken != Tokens.KEYWORD_ELSE ? parser.ParseTernary() : new ConstantNode<bool>(true);
-        if (tokens.Peek() != Tokens.KEYWORD_THEN)
+        if (!tokens.NextTokenIs(Tokens.KEYWORD_THEN))
         {
             throw new MalformedStatementException(Tokens.KEYWORD_IF, Tokens.KEYWORD_THEN);
         }
@@ -29,17 +30,17 @@ public class ConditionalParser : INodeParser
         AstNode? elseNode = null;
         while (tokens.Count > 0)
         {
-            if(tokens.Peek() == Tokens.KEYWORD_ELSE || tokens.Peek() == Tokens.KEYWORD_ELSEIF)
+            if(tokens.NextTokenIs(Tokens.KEYWORD_ELSE) || tokens.NextTokenIs(Tokens.KEYWORD_ELSEIF))
             {
                 var token = tokens.Dequeue();
                 elseNode = ParseConditional(tokens, token, parser);
             }
 
-            if(tokens.Peek() == Tokens.KEYWORD_ENDIF && (currentToken == Tokens.KEYWORD_ELSE || currentToken == Tokens.KEYWORD_ELSEIF))
+            if(tokens.NextTokenIs(Tokens.KEYWORD_ENDIF) && (currentToken == Tokens.KEYWORD_ELSE || currentToken == Tokens.KEYWORD_ELSEIF))
             {
                 return new ConditionalNode(condition, body, elseNode);
             }
-            else if(tokens.Peek() == Tokens.KEYWORD_ENDIF)
+            else if(tokens.NextTokenIs(Tokens.KEYWORD_ENDIF))
             {
                 tokens.Dequeue(); //Pop 'ENDIF'.
                 terminatedCorrectly = true;

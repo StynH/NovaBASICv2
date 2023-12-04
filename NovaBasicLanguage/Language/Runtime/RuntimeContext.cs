@@ -5,7 +5,7 @@ using NovaBasicLanguage.Language.Runtime;
 
 namespace NovaBASIC.Language.Runtime;
 
-public class RuntimeContext(RuntimeContext? parent = null)
+public class RuntimeContext(bool isGlobal = false, bool isIsolated = false, RuntimeContext? parent = null)
 {
     private Dictionary<string, MemoryItem> _variables = [];
     private Dictionary<string, MemoryReference> _references = [];
@@ -13,19 +13,20 @@ public class RuntimeContext(RuntimeContext? parent = null)
 
     private readonly RuntimeContext? _parentRuntimeContext = parent; // Parent RuntimeContext for nested scopes
 
-    public void AssignVariable(string variableName, object? value, bool isImmutable)
+    public bool IsGlobal { get; } = isGlobal;
+    public bool IsIsolated { get; } = isIsolated;
+
+    public MemoryItem AssignVariable(string variableName, object? value, bool isImmutable)
     {
         if (_references.TryGetValue(variableName, out var reference))
         {
-            var memoryItem = GetVariable(reference.VariableName);
+            var memoryItem = reference.GetReferencedItem();
             if (reference is MemoryCollectionReference memoryCollectionReference)
             {
-                AssignCollectionIndexedValue(memoryItem, memoryCollectionReference, value);
-                return;
+                return AssignCollectionIndexedValue(memoryItem, memoryCollectionReference, value);
             }
 
-            AssignVariable(memoryItem.Name, value, memoryItem.IsImmutable);
-            return;
+            return AssignVariable(memoryItem.Name, value, memoryItem.IsImmutable);
         }
 
         //Variable is in current scope.
@@ -38,13 +39,21 @@ public class RuntimeContext(RuntimeContext? parent = null)
 
             currentScopeItem.Value = value;
             _variables[variableName] = currentScopeItem;
-            return;
+            return _variables[variableName];
         }
 
         //Check upper scopes.
         var currentRuntimeContext = _parentRuntimeContext;
         while (currentRuntimeContext != null)
         {
+            //Isolated scopes happen during recursion.
+            //Isolated scopes can only access global variables.
+            if (IsIsolated && !currentRuntimeContext.IsGlobal)
+            {
+                currentRuntimeContext = currentRuntimeContext._parentRuntimeContext;
+                continue;
+            }
+
             if (currentRuntimeContext._variables.TryGetValue(variableName, out var parentScopeItem))
             {
                 if (parentScopeItem.IsImmutable)
@@ -54,15 +63,16 @@ public class RuntimeContext(RuntimeContext? parent = null)
 
                 parentScopeItem.Value = value;
                 currentRuntimeContext._variables[variableName] = parentScopeItem;
-                return;
+                return currentRuntimeContext._variables[variableName];
             }
             currentRuntimeContext = currentRuntimeContext._parentRuntimeContext;
         }
 
         _variables[variableName] = new MemoryItem(variableName, value, isImmutable);
+        return _variables[variableName];
     }
 
-    private static void AssignCollectionIndexedValue(MemoryItem memoryItem, MemoryCollectionReference memoryCollectionReference, object? value)
+    private static MemoryItem AssignCollectionIndexedValue(MemoryItem memoryItem, MemoryCollectionReference memoryCollectionReference, object? value)
     {
         var variable = memoryItem.Value as dynamic;
         var indexer = memoryCollectionReference.Index;
@@ -79,6 +89,8 @@ public class RuntimeContext(RuntimeContext? parent = null)
             indexer = indexer.Sub;
         } 
         while (indexer is not null);
+
+        return memoryItem;
     }
 
     public void AssignVariable(MemoryItem memoryItem)
@@ -95,7 +107,7 @@ public class RuntimeContext(RuntimeContext? parent = null)
     {
         if (_references.TryGetValue(variableName, out var reference))
         {
-            variableName = reference.VariableName;
+            return reference.GetReferencedItem();
         }
         if (_variables.TryGetValue(variableName, out var item))
         {
@@ -128,9 +140,9 @@ public class RuntimeContext(RuntimeContext? parent = null)
                ?? throw new KeyNotFoundException($"Function '{functionName}' not found.");
     }
 
-    public RuntimeContext CreateChildRuntimeContext()
+    public RuntimeContext CreateChildRuntimeContext(bool isIsolated)
     {
-        return new RuntimeContext(this);
+        return new RuntimeContext(false, isIsolated, this);
     }
 
     public RuntimeContext? PopRuntimeContext()

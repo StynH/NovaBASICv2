@@ -8,9 +8,9 @@ public partial class Parser
 {
     private AstNode ParseStl(string token)
     {
-        if(TrigonometricParser.KNOWN_TOKENS.Contains(token))
+        if(MathHelperFunctionsParser.KNOWN_TOKENS.Contains(token))
         {
-            return _tokenParsers["TRIGONOMETRIC"].Parse(_tokens, token, this);
+            return _tokenParsers["MATHHELPERS"].Parse(_tokens, token, this);
         }
 
         throw new UnknownStlFunctionException(token);

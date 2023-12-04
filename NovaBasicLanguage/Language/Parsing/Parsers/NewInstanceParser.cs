@@ -5,6 +5,7 @@ using NovaBASIC.Language.Parsing.Parsers.Attribute;
 using NovaBASIC.Language.Lexicon;
 using NovaBasicLanguage.Language.Parsing.Nodes;
 using NovaBasicLanguage.Language.Parsing.Nodes.Array;
+using NovaBasicLanguage.Extensions;
 
 namespace NovaBasicLanguage.Language.Parsing.Parsers;
 
@@ -16,7 +17,7 @@ public class NewInstanceParser : INodeParser
     public AstNode Parse(Queue<string> tokens, string currentToken, Parser parser)
     {
         //Array initializing
-        if(tokens.TryPeek(out var next) && next == Tokens.OPENING_BRACKET)
+        if(tokens.NextTokenIs(Tokens.OPENING_BRACKET))
         {
             return new NewInstanceNode(ParseArray(tokens, parser));
         }
@@ -29,14 +30,14 @@ public class NewInstanceParser : INodeParser
         tokens.Dequeue(); //Pop '['.
 
         AstNode size = new ConstantNode<int>(DEFAULT_ARRAY_SIZE);
-        if (tokens.Peek() != Tokens.CLOSING_BRACKET)
+        if (!tokens.NextTokenIs(Tokens.CLOSING_BRACKET))
         {
             size = parser.ParseTernary();
         }
 
         tokens.Dequeue(); //Pop ']'.
 
-        if(tokens.TryPeek(out var next) && next == Tokens.OPENING_BRACKET)
+        if(tokens.NextTokenIs(Tokens.OPENING_BRACKET))
         {
             return new ArrayDeclarationNode(size, ParseArray(tokens, parser) as ArrayDeclarationNode);
         }

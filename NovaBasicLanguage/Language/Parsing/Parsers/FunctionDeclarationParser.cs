@@ -4,6 +4,7 @@ using NovaBASIC.Language.Parsing;
 using NovaBASIC.Language.Parsing.Nodes;
 using NovaBASIC.Language.Parsing.Parsers.Attribute;
 using NovaBASIC.Language.Parsing.Parsers.Interface;
+using NovaBasicLanguage.Extensions;
 using NovaBasicLanguage.Language.Parsing.Nodes;
 
 namespace NovaBasicLanguage.Language.Parsing.Parsers;
@@ -24,7 +25,7 @@ public class FunctionDeclarationParser : INodeParser
         var parameters = new List<string>();
         while(tokens.Count > 0)
         {
-            if(tokens.Peek() == Tokens.CLOSING_PARENTHESIS)
+            if(tokens.NextTokenIs(Tokens.CLOSING_PARENTHESIS))
             {
                 tokens.Dequeue();
                 terminatedCorrectly = true;
@@ -32,7 +33,7 @@ public class FunctionDeclarationParser : INodeParser
             }
 
             parameters.Add(tokens.Dequeue());
-            if(tokens.Peek() == Tokens.COMMA)
+            if(tokens.NextTokenIs(Tokens.COMMA))
             {
                 tokens.Dequeue(); //Pop ','.
             }
@@ -48,7 +49,7 @@ public class FunctionDeclarationParser : INodeParser
         var body = new List<AstNode>();
         while(tokens.Count > 0)
         {
-            if(tokens.Peek() == Tokens.KEYWORD_END_FUNC)
+            if(tokens.NextTokenIs(Tokens.KEYWORD_END_FUNC))
             {
                 tokens.Dequeue();
                 terminatedCorrectly = true;

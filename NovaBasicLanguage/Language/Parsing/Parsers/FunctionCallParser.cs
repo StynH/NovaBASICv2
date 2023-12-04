@@ -5,6 +5,7 @@ using NovaBASIC.Language.Parsing;
 using NovaBASIC.Language.Parsing.Parsers.Attribute;
 using NovaBASIC.Language.Parsing.Parsers.Interface;
 using NovaBasicLanguage.Language.Parsing.Nodes;
+using NovaBasicLanguage.Extensions;
 
 namespace NovaBasicLanguage.Language.Parsing.Parsers;
 
@@ -23,7 +24,7 @@ public class FunctionCallParser : INodeParser
         var parameters = new List<AstNode>();
         while (tokens.Count > 0)
         {
-            if (tokens.Peek() == Tokens.CLOSING_PARENTHESIS)
+            if (tokens.NextTokenIs(Tokens.CLOSING_PARENTHESIS))
             {
                 tokens.Dequeue();
                 terminatedCorrectly = true;
@@ -31,7 +32,7 @@ public class FunctionCallParser : INodeParser
             }
 
             parameters.Add(parser.ParseTernary());
-            if (tokens.Peek() == Tokens.COMMA)
+            if (tokens.NextTokenIs(Tokens.COMMA))
             {
                 tokens.Dequeue(); //Pop ','.
             }

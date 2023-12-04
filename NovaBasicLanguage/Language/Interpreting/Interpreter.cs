@@ -5,6 +5,7 @@ using NovaBasicLanguage.Language.Exceptions;
 using NovaBasicLanguage.Language.Helpers;
 using NovaBasicLanguage.Language.Parsing.Nodes;
 using NovaBasicLanguage.Language.Parsing.Nodes.Array;
+using NovaBasicLanguage.Language.Parsing.Nodes.Loops;
 using NovaBasicLanguage.Language.Runtime;
 using System.Reflection;
 
@@ -12,11 +13,12 @@ namespace NovaBASIC.Language.Interpreting;
 
 public partial class Interpreter : INodeVisitor
 {
-    private RuntimeContext _runtimeContext = new();
+    private RuntimeContext _runtimeContext = new(true);
 
-    private Dictionary<Type, MethodInfo> _methodsCache = new Dictionary<Type, MethodInfo>();
+    private Dictionary<Type, MethodInfo> _methodsCache = [];
 
     private bool _returnIsCalled;
+    private bool _breakIsCalled;
 
     public object? Result { get; set; } = null;
 
@@ -108,7 +110,7 @@ public partial class Interpreter : INodeVisitor
         Result = node.Value;
     }
 
-    public void Visit(NullNode node)
+    public void Visit(NullNode _)
     {
         Result = null;
     }
@@ -132,28 +134,27 @@ public partial class Interpreter : INodeVisitor
                 return;
         }
 
-        _runtimeContext.AssignVariable(name, value, node.IsImmutable);
-        Result = null;
+        Result = _runtimeContext.AssignVariable(name, value, node.IsImmutable);
     }
 
     public void Visit(ReferenceNode node)
     {
-        Result = new MemoryReference(node.VariableName);
+        Result = new MemoryReference(_runtimeContext.GetVariable(node.VariableName));
     }
 
     public void Visit(ArrayReferenceNode node)
     {
-        Result = new MemoryCollectionReference(node.VariableName, NodeToIndexer(node.Index));
+        Result = new MemoryCollectionReference(_runtimeContext.GetVariable(node.VariableName), NodeToIndexer(node.Index));
     }
 
     private Indexer NodeToIndexer(ArrayIndexingNode node)
     {
         if (node.Sub is not null)
         {
-            return new Indexer((int)ExecuteNode(node.Index)!, NodeToIndexer(node.Sub));
+            return new Indexer(Convert.ToInt32(ExecuteNode(node.Index)), NodeToIndexer(node.Sub));
         }
 
-        return new Indexer((int)ExecuteNode(node.Index)!);
+        return new Indexer(Convert.ToInt32(ExecuteNode(node.Index)));
     }
 
     public void Visit(FunctionDeclarationNode node)
@@ -176,13 +177,18 @@ public partial class Interpreter : INodeVisitor
             }
 
             var value = ExecuteNode(node.Parameters[i]);
-            if(value is MemoryReference memoryReference)
+            switch (value)
             {
-                _runtimeContext.AssignReference(param, memoryReference);
-                continue;
+                case MemoryCollectionReference memoryCollectionReference:
+                    _runtimeContext.AssignReference(param, memoryCollectionReference);
+                    continue;
+                case MemoryReference memoryReference:
+                    _runtimeContext.AssignReference(param, memoryReference);
+                    continue;
+                default:
+                    _runtimeContext.AssignVariable(param, value, false);
+                    continue;
             }
-
-            _runtimeContext.AssignVariable(param, value, false);
         }
 
         //Execute function
@@ -236,6 +242,81 @@ public partial class Interpreter : INodeVisitor
         Result = null;
     }
 
+    public void Visit(ForLoopNode node)
+    {
+        CreateScope();
+
+        string? conditionName = null;
+        switch (node.Condition)
+        {
+            case VariableNode variableNode:
+                conditionName = variableNode.Name;
+                break;
+            case ReferenceNode referenceNode:
+                conditionName = referenceNode.VariableName;
+                break;
+            case VariableDeclarationNode declarationNode:
+                conditionName = ((MemoryItem)ExecuteNode(declarationNode)!).Name;
+                break;
+        }
+
+        if(conditionName is null)
+        {
+            throw new ArgumentNullException(nameof(ForLoopNode.Condition));
+        }
+
+        var conditionMemoryItem = _runtimeContext.GetVariable(conditionName);
+        var untilCondition = Convert.ToInt32(ExecuteNode(node.Until));
+        var stepSize = Convert.ToInt32(ExecuteNode(node.StepSize));
+        while (Convert.ToInt32(conditionMemoryItem.Value!) < untilCondition)
+        {
+            if (_breakIsCalled || _returnIsCalled)
+            {
+                break;
+            }
+
+            foreach(var bodyNode in node.Body)
+            {
+                if (_breakIsCalled || _returnIsCalled)
+                {
+                    break;
+                }
+                ExecuteNode(bodyNode);
+            }
+
+            conditionMemoryItem.Value = Convert.ToInt32(conditionMemoryItem.Value) + stepSize;
+        }
+
+        PopScope();
+    }
+
+    public void Visit(WhileLoopNode node)
+    {
+        CreateScope();
+
+        var condition = (bool)ExecuteNode(node.Condition)!;
+        while (condition)
+        {
+            if (_breakIsCalled || _returnIsCalled)
+            {
+                break;
+            }
+
+            foreach (var bodyNode in node.Body)
+            {
+                if (_breakIsCalled || _returnIsCalled)
+                {
+                    break;
+                }
+                ExecuteNode(bodyNode);
+            }
+
+            condition = (bool)ExecuteNode(node.Condition)!;
+        }
+
+        PopScope();
+    }
+
     public void Visit(NewInstanceNode node)
     {
         var value = ExecuteNode(node.Operand);
@@ -249,7 +330,7 @@ public partial class Interpreter : INodeVisitor
 
         do
         {
-            dimensions.Add((int)ExecuteNode(arrayNode.Size)!);
+            dimensions.Add(Convert.ToInt32(ExecuteNode(arrayNode.Size)));
             arrayNode = arrayNode.Sub;
         }
         while (arrayNode is not null);
@@ -265,7 +346,8 @@ public partial class Interpreter : INodeVisitor
         var result = variable;
         do
         {
-            var index = (int)ExecuteNode(array.Index)!;
+            var indexingResult = ExecuteNode(array.Index)!;
+            var index = Convert.ToInt32(indexingResult);
             result = result![index!];
             array = array.Sub;
         }
@@ -282,7 +364,7 @@ public partial class Interpreter : INodeVisitor
 
         do
         {
-            var index = (int)ExecuteNode(currentIndex.Index)!;
+            var index = Convert.ToInt32(ExecuteNode(currentIndex.Index));
             if (currentIndex.Sub is null)
             {
                 variable![index!] = value;
@@ -309,9 +391,9 @@ public partial class Interpreter : INodeVisitor
         return _runtimeContext;
     }
 
-    private void CreateScope()
+    private void CreateScope(bool isIsolated = false)
     {
-        _runtimeContext = _runtimeContext.CreateChildRuntimeContext();
+        _runtimeContext = _runtimeContext.CreateChildRuntimeContext(isIsolated);
     }
 
     private void PopScope()

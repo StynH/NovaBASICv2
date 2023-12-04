@@ -51,7 +51,9 @@ public static partial class Tokens
     public const string KEYWORD_LET = "LET";
     public const string KEYWORD_IMMUTABLE = "IMMUTABLE";
     public const string KEYWORD_WHILE = "WHILE";
+    public const string KEYWORD_END_WHILE = "ENDWHILE";
     public const string KEYWORD_FOR = "FOR";
+    public const string KEYWORD_END_FOR = "ENDFOR";
     public const string KEYWORD_TO = "TO";
     public const string KEYWORD_STEP = "STEP";
     public const string KEYWORD_NEXT = "NEXT";

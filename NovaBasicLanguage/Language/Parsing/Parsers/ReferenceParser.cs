@@ -7,6 +7,7 @@ using NovaBASIC.Extensions;
 using NovaBasicLanguage.Language.Exceptions;
 using NovaBasicLanguage.Language.Parsing.Nodes;
 using NovaBasicLanguage.Language.Parsing.Nodes.Array;
+using NovaBasicLanguage.Extensions;
 
 namespace NovaBasicLanguage.Language.Parsing.Parsers;
 
@@ -28,7 +29,7 @@ public class ReferenceParser : INodeParser
             switch (next)
             {
                 case Tokens.OPENING_BRACKET:
-                    return ParseArrayReference(tokens, token, parser);
+                    return ParseArrayReference(tokens, token!, parser);
             }
         }
 
@@ -48,7 +49,7 @@ public class ReferenceParser : INodeParser
         var index = parser.ParseTernary();
         tokens.Dequeue(); //Pop ']'.
 
-        if(tokens.TryPeek(out var next) && next == Tokens.OPENING_BRACKET)
+        if(tokens.NextTokenIs(Tokens.OPENING_BRACKET))
         {
             return new ArrayIndexingNode(variable, index, ParseIndexer(tokens, variable, parser));
         }

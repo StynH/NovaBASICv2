@@ -1,6 +1,23 @@
-﻿namespace NovaBasicLanguage.Language.Runtime;
+﻿using NovaBASIC.Language.Runtime;
 
-public class MemoryReference(string variableName)
+namespace NovaBasicLanguage.Language.Runtime;
+
+public class MemoryReference(IReferencable referencable) : IReferencable
 {
-    public string VariableName { get; set; } = variableName;
+    public IReferencable Referencable { get; set; } = referencable;
+
+    public MemoryItem GetReferencedItem()
+    {
+        if(Referencable is MemoryItem memoryItem)
+        {
+            return memoryItem;
+        }
+
+        if(Referencable is MemoryReference memoryReference)
+        {
+            return memoryReference.GetReferencedItem();
+        }
+
+        throw new NullReferenceException(nameof(Referencable));
+    }
 }

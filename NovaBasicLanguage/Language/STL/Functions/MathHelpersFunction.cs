@@ -7,8 +7,8 @@ using NovaBasic.Language.STL.Nodes;
 
 namespace NovaBasic.Language.STL.Functions;
 
-[StlFunction("TRIGONOMETRIC")]
-public class TrigonometricFunction : IStlFunction
+[StlFunction("MATHHELPERS")]
+public class MathHelpersFunction : IStlFunction
 {
     public object? Execute(Interpreter interpreter, AstNode node)
     {

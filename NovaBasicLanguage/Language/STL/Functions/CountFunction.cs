@@ -19,7 +19,6 @@ public class CountFunction : IStlFunction
             if (arr != null)
             {
                 return arr.Length;
-
             }
 
             return 0;

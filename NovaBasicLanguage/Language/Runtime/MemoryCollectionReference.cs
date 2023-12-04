@@ -1,6 +1,6 @@
 ﻿namespace NovaBasicLanguage.Language.Runtime;
 
-public class MemoryCollectionReference(string variableName, Indexer index) : MemoryReference(variableName)
+public class MemoryCollectionReference(IReferencable referencable, Indexer index) : MemoryReference(referencable)
 {
     public Indexer Index { get; } = index;
 }

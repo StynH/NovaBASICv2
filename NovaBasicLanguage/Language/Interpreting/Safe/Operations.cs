@@ -30,12 +30,14 @@ public static class Operations
     private static bool TryAddAsDecimals(object lhs, object rhs, out decimal result)
     {
         result = 0;
-        if (decimal.TryParse(lhs.ToString(), out var decimal1) &&
-            decimal.TryParse(rhs.ToString(), out var decimal2))
+        try
         {
-            result = decimal1 + decimal2;
+            result = (dynamic)lhs + (dynamic)rhs;
             return true;
         }
-        return false;
+        catch
+        {
+            return false;
+        }
     }
 }

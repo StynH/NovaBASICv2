@@ -65,7 +65,7 @@ public partial class Parser
     {
         var term = ParseTerm();
 
-        if (_tokens.TryPeek(out var next))
+        while (_tokens.TryPeek(out var next))
         {
             switch (next)
             {
@@ -77,6 +77,9 @@ public partial class Parser
                     _tokens.Dequeue();
                     term = BalanceNode(new BinaryNode(term, op, ParseTerm()));
                     break;
+
+                default:
+                    return term;
             }
         }
 

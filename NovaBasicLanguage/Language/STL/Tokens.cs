@@ -13,7 +13,7 @@ public static partial class Tokens
     public const string COUNT_STL = "COUNT";
 
     // Math
-    public const string RANDOM_STL = "RAND";
+    public const string RAND_STL = "RAND";
     public const string FLOOR_STL = "FLOOR";
     public const string CEIL_STL = "CEIL";
     public const string SIN_STL = "SIN";

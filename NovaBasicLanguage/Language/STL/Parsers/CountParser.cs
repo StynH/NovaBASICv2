@@ -4,6 +4,7 @@ using NovaBASIC.Language.Parsing;
 using NovaBASIC.Language.Parsing.Parsers.Attribute;
 using NovaBASIC.Language.Lexicon;
 using NovaBasicLanguage.Language.STL.Nodes;
+using NovaBasicLanguage.Language.Exceptions.Assertion;
 
 namespace NovaBasicLanguage.Language.STL.Parsers;
 
@@ -12,6 +13,9 @@ public class CountParser : INodeParser
 {
     public AstNode Parse(Queue<string> tokens, string currentToken, Parser parser)
     {
-        return new CountNode(parser.ParseTernary());
+        Assert.NextTokenIsCorrectThenDequeue(tokens, currentToken, Tokens.OPENING_PARENTHESIS);
+        var operand = parser.ParseTernary();
+        Assert.NextTokenIsCorrectThenDequeue(tokens, currentToken, Tokens.CLOSING_PARENTHESIS);
+        return new CountNode(operand);
     }
 }

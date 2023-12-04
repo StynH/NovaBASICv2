@@ -1,5 +1,6 @@
 ﻿using NovaBasic.Language.STL.Parsers;
 using NovaBasic.Language.STL.Runtime;
+using NovaBASIC.Language.Lexicon;
 using NovaBASIC.Language.Runtime;
 using NovaBASIC.Language.STL.Attribute;
 using NovaBASIC.Language.STL.Functions.Interface;
@@ -50,6 +51,6 @@ public class StandardLibrary
     public static bool IsKnownToken(string token)
     {
         //TODO: Extend and streamline this.
-        return TrigonometricParser.KNOWN_TOKENS.Contains(token);
+        return MathHelperFunctionsParser.KNOWN_TOKENS.Contains(token) || token.Equals(Tokens.RAND_STL);
     }
 }

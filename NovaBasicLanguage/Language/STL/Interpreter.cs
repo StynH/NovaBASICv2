@@ -11,6 +11,11 @@ public partial class Interpreter : INodeVisitor
 {
     private readonly StandardLibrary _stl = new();
 
+    public Interpreter()
+    {
+        _stl.RegisterStandardVariables(_runtimeContext);
+    }
+
     public void Visit(BinaryNode node)
     {
         ExecuteStlFunction(node, "COMPARISON");
@@ -23,12 +28,17 @@ public partial class Interpreter : INodeVisitor
 
     public void Visit(TrigonometricNode node)
     {
-        ExecuteStlFunction(node, "TRIGONOMETRIC");
+        ExecuteStlFunction(node, "MATHHELPERS");
     }
 
     public void Visit(CountNode node)
     {
         ExecuteStlFunction(node, Tokens.COUNT_STL);
+    }
+
+    public void Visit(RandomNode node)
+    {
+        ExecuteStlFunction(node, Tokens.RAND_STL);
     }
 
     private void ExecuteStlFunction(AstNode node, string functionName)
