@@ -8,6 +8,7 @@ using NovaBasicLanguage.Language.Exceptions;
 using NovaBasicLanguage.Language.Parsing.Nodes;
 using NovaBasicLanguage.Language.Parsing.Nodes.Array;
 using NovaBasicLanguage.Extensions;
+using NovaBasicLanguage.Language.Parsing.Nodes.References;
 
 namespace NovaBasicLanguage.Language.Parsing.Parsers;
 
@@ -30,6 +31,9 @@ public class ReferenceParser : INodeParser
             {
                 case Tokens.OPENING_BRACKET:
                     return ParseArrayReference(tokens, token!, parser);
+
+                case Tokens.ACCESSOR:
+                    return ParseFieldReference(tokens, token!, parser);
             }
         }
 
@@ -56,4 +60,12 @@ public class ReferenceParser : INodeParser
 
         return new ArrayIndexingNode(variable, index);
     } 
+
+    private AstNode ParseFieldReference(Queue<string> tokens, string token, Parser parser)
+    {
+        var variableNode = new VariableNode(token);
+        tokens.Dequeue(); //Pop '.' (Accessor).
+        var field = tokens.Dequeue(); 
+        return new FieldReferenceNode(token, field);
+    }
 }

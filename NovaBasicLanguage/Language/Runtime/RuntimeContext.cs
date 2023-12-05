@@ -22,9 +22,14 @@ public class RuntimeContext(bool isGlobal = false, bool isIsolated = false, Runt
         if (_references.TryGetValue(variableName, out var reference))
         {
             var memoryItem = reference.GetReferencedItem();
-            if (reference is MemoryCollectionReference memoryCollectionReference)
+            switch (reference)
             {
-                return AssignCollectionIndexedValue(memoryItem, memoryCollectionReference, value);
+                case MemoryCollectionReference memoryCollectionReference:
+                    return AssignCollectionIndexedValue(memoryItem, memoryCollectionReference, value);
+
+                case MemoryFieldReference memoryFieldReference:
+                    return AssignFieldValue(memoryItem, memoryFieldReference, value);
+
             }
 
             return AssignVariable(memoryItem.Name, value, memoryItem.IsImmutable);
@@ -71,6 +76,18 @@ public class RuntimeContext(bool isGlobal = false, bool isIsolated = false, Runt
 
         _variables[variableName] = new MemoryItem(variableName, value, isImmutable);
         return _variables[variableName];
+    }
+
+    private MemoryItem AssignFieldValue(MemoryItem memoryItem, MemoryFieldReference memoryFieldReference, object? value)
+    {
+        var structValue = memoryItem.Value;
+        if(structValue is MemoryStruct memoryStruct)
+        {
+            memoryStruct.SetFieldValue(memoryFieldReference.Field, value);
+            return memoryItem;
+        }
+
+        throw new UnknownFieldAccessedException(memoryItem.Name, memoryFieldReference.Field);
     }
 
     private static MemoryItem AssignCollectionIndexedValue(MemoryItem memoryItem, MemoryCollectionReference memoryCollectionReference, object? value)

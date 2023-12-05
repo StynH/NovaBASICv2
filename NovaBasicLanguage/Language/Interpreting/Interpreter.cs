@@ -8,6 +8,7 @@ using NovaBasicLanguage.Language.Parsing.Nodes.Array;
 using NovaBasicLanguage.Language.Parsing.Nodes.Declarations;
 using NovaBasicLanguage.Language.Parsing.Nodes.Instances;
 using NovaBasicLanguage.Language.Parsing.Nodes.Loops;
+using NovaBasicLanguage.Language.Parsing.Nodes.References;
 using NovaBasicLanguage.Language.Runtime;
 using System.Reflection;
 
@@ -147,6 +148,11 @@ public partial class Interpreter : INodeVisitor
     public void Visit(ArrayReferenceNode node)
     {
         Result = new MemoryCollectionReference(_runtimeContext.GetVariable(node.VariableName), NodeToIndexer(node.Index));
+    }
+
+    public void Visit(FieldReferenceNode node)
+    {
+        Result = new MemoryFieldReference(_runtimeContext.GetVariable(node.VariableName), node.Field);
     }
 
     private Indexer NodeToIndexer(ArrayIndexingNode node)
