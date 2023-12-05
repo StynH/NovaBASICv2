@@ -3,6 +3,7 @@ using NovaBASIC.Language.Parsing.Nodes;
 using NovaBASIC.Language.Parsing;
 using NovaBASIC.Language.Parsing.Parsers.Attribute;
 using NovaBASIC.Language.Parsing.Parsers.Interface;
+using NovaBasicLanguage.Language.Parsing.Nodes.Declarations;
 
 namespace NovaBasicLanguage.Language.Parsing.Parsers;
 

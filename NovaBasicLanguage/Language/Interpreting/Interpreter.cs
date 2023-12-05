@@ -5,6 +5,8 @@ using NovaBasicLanguage.Language.Exceptions;
 using NovaBasicLanguage.Language.Helpers;
 using NovaBasicLanguage.Language.Parsing.Nodes;
 using NovaBasicLanguage.Language.Parsing.Nodes.Array;
+using NovaBasicLanguage.Language.Parsing.Nodes.Declarations;
+using NovaBasicLanguage.Language.Parsing.Nodes.Instances;
 using NovaBasicLanguage.Language.Parsing.Nodes.Loops;
 using NovaBasicLanguage.Language.Runtime;
 using System.Reflection;
@@ -332,7 +334,7 @@ public partial class Interpreter : INodeVisitor
         Result = value;
     }
 
-    public void Visit(ArrayDeclarationNode node)
+    public void Visit(ArrayInstanceNode node)
     {
         var dimensions = new List<int>();
         var arrayNode = node;
@@ -345,6 +347,59 @@ public partial class Interpreter : INodeVisitor
         while (arrayNode is not null);
 
         Result = ArrayHelper.CreateJaggedArray([.. dimensions], 0);
+    }
+
+    public void Visit(StructDeclarationNode node)
+    {
+        _runtimeContext.CreateStruct(node.Name, node.Fields);
+        Result = null;
+    }
+
+    public void Visit(StructInstanceNode node)
+    {
+        var newStructInstance = _runtimeContext.CreateNewStructInstance(node.Name);
+        var fields = newStructInstance.GetFields();
+        for (var i = 0; i < fields.Count; ++i)
+        {
+            if(i >= node.Parameters.Length)
+            {
+                break;
+            }
+
+            newStructInstance.SetFieldValue(
+                fields.ElementAt(i), 
+                ExecuteNode(node.Parameters[i])
+            );
+        }
+        
+        Result = newStructInstance;
+    }
+
+    public void Visit(FieldAccessorNode node)
+    {
+        var variable = _runtimeContext.GetVariable(node.Variable);
+        if(variable.Value is MemoryStruct memoryStruct)
+        {
+            Result = memoryStruct.GetFieldValue(node.Name);
+            return;
+        }
+
+        throw new InvalidOperationException($"Unable to access field '{node.Name}' on '{node.Variable}'.");
+    }
+
+    public void Visit(FieldAssignNode node)
+    {
+        var variable = _runtimeContext.GetVariable(node.Variable);
+        var value = ExecuteNode(node.Value);
+
+        if (variable.Value is MemoryStruct memoryStruct)
+        {
+            memoryStruct.SetFieldValue(node.Field, value);
+            Result = null;
+            return;
+        }
+
+        throw new InvalidOperationException($"Unable to set field '{node.Field}' on '{node.Variable}'.");
     }
 
     public void Visit(ArrayIndexingNode node)

@@ -7,6 +7,7 @@ using NovaBASIC.Language.STL;
 using NovaBasicLanguage.Extensions;
 using NovaBasicLanguage.Language.Parsing.Nodes;
 using NovaBasicLanguage.Language.Parsing.Nodes.Array;
+using NovaBasicLanguage.Language.Parsing.Nodes.Declarations;
 
 namespace NovaBASIC.Language.Parsing;
 
@@ -123,6 +124,9 @@ public partial class Parser
                 case Tokens.OPENING_BRACKET:
                     return ProcessArrayCallOrAssignment(token);
 
+                case Tokens.ACCESSOR:
+                    return ProcessFieldCallOrAssignment(token);
+
                 case Tokens.SET:
                     _tokens.Dequeue();
                     return new VariableDeclarationNode(token, ParseTernary());
@@ -136,7 +140,7 @@ public partial class Parser
     {
         var arrayIndexing = ParseArrayIndexing(new VariableNode(token));
 
-        if (_tokens.TryPeek(out var nextToken) && nextToken == Tokens.SET)
+        if (_tokens.NextTokenIs(Tokens.SET))
         {
             _tokens.Dequeue(); // Pop '='.
             return new ArrayAssignNode(arrayIndexing, ParseTernary());
@@ -151,15 +155,25 @@ public partial class Parser
         var index = ParseTernary();
         _tokens.Dequeue(); //Pop ']'.
 
-        if (_tokens.TryPeek(out var next))
+        if (_tokens.NextTokenIs(Tokens.OPENING_BRACKET))
         {
-            if(next == Tokens.OPENING_BRACKET)
-            {
-                return new ArrayIndexingNode(term, index, ParseArrayIndexing(term));
-            }
+            return new ArrayIndexingNode(term, index, ParseArrayIndexing(term));
         }
 
         return new ArrayIndexingNode(term, index, null);
+    }
+
+    private AstNode ProcessFieldCallOrAssignment(string token)
+    {
+        _tokens.Dequeue(); //Pop '.' (Accessor).
+        var fieldIndexing = _tokens.Dequeue();
+        if (_tokens.NextTokenIs(Tokens.SET))
+        {
+            _tokens.Dequeue(); // Pop '='.
+            return new FieldAssignNode(token, fieldIndexing, ParseTernary());
+        }
+
+        return new FieldAccessorNode(token, fieldIndexing);
     }
 
     private static AstNode BalanceNode(AstNode node)

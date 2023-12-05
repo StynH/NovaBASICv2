@@ -4,7 +4,7 @@
 Second implementation of my own programming language called NovaBASIC. Made in C# .NET 8, using Blazor as front-end.
 
 ## Examples
-Example of Fibonacci in NovaBasic.
+Example of Fibonacci in NovaBASIC.
 ```
 FUNC fibonacci(n)
     IF n <= 1 THEN
@@ -21,7 +21,7 @@ FOR LET i = 0 TO num + 1
 ENDFOR
 ```
 
-Example of Sieve of Eratosthenes in NovaBasic.
+Example of Sieve of Eratosthenes in NovaBASIC.
 ```
 FUNC sieveOfEratosthenes(limit)
     LET prime = NEW [limit + 1]
@@ -49,7 +49,28 @@ LET n = 30
 sieveOfEratosthenes(n)
 ```
 
-Example of Quick Sort in NovaBasic.
+Example of Structs in NovaBASIC:
+```
+STRUCT Person
+    Name,
+    Age,
+    Height
+ENDSTRUCT
+
+FUNC EnableToJoinTallClub(person)
+    RETURN person.Height >= 190
+ENDFUNC
+
+FUNC EnableToJoinJoeClub(person)
+    RETURN person.Name MATCHES "^Joe\s+[A-Za-z]+$"
+ENDFUNC
+
+LET joe = NEW Person("Joe Doe", 25, 185)
+PRINT "Member of the Tall Club: " + EnableToJoinTallClub(joe)
+PRINT "Member of the Joe Club: " + EnableToJoinJoeClub(joe)
+```
+
+Example of Quick Sort in NovaBASIC.
 ```
 FUNC printArray(arrRef)
     FOR LET i = 0 TO COUNT(arrRef)

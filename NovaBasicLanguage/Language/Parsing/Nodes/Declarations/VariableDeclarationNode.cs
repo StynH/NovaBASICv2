@@ -1,4 +1,6 @@
-﻿namespace NovaBASIC.Language.Parsing.Nodes;
+﻿using NovaBASIC.Language.Parsing.Nodes;
+
+namespace NovaBasicLanguage.Language.Parsing.Nodes.Declarations;
 
 public class VariableDeclarationNode(string name, AstNode assignment, bool isImmutable = false) : AstNode
 {

@@ -29,6 +29,7 @@ public static partial class Tokens
     public const string NULL = "null";
     public const string OR = "||";
     public const string AND = "&&";
+    public const string ACCESSOR = ".";
 
     // Syntax
     public const string KEYWORD_NEW = "NEW";
@@ -43,6 +44,8 @@ public static partial class Tokens
     public const string KEYWORD_ELSEIF = "ELSEIF";
     public const string KEYWORD_ELSE = "ELSE";
     public const string KEYWORD_REF = "REF";
+    public const string KEYWORD_STRUCT = "STRUCT";
+    public const string KEYWORD_END_STRUCT = "ENDSTRUCT";
 
     public const string DECLARATION_PATTERN = "[a-zA-Z_$][a-zA-Z0-9_$]*";
     public const string OPENING_PARENTHESIS = "(";

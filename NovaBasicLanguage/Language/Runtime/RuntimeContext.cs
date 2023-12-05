@@ -141,6 +141,26 @@ public class RuntimeContext(bool isGlobal = false, bool isIsolated = false, Runt
                ?? throw new KeyNotFoundException($"Function '{functionName}' not found.");
     }
 
+    public void CreateStruct(string structName, string[] fields)
+    {
+        if (_structDefinitions.ContainsKey(structName))
+        {
+            throw new StructAlreadyExistsException(structName);
+        }
+
+        _structDefinitions[structName] = new MemoryStruct(structName, fields);
+    }
+
+    public MemoryStruct CreateNewStructInstance(string structName)
+    {
+        if (!_structDefinitions.TryGetValue(structName, out MemoryStruct? memoryStruct))
+        {
+            throw new UnknownStructDeclarationException(structName);
+        }
+
+        return memoryStruct.NewInstance();
+    }
+
     public RuntimeContext CreateChildRuntimeContext(bool isIsolated)
     {
         return new RuntimeContext(false, isIsolated, this);

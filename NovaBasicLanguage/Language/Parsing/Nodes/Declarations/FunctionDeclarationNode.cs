@@ -1,6 +1,6 @@
 ﻿using NovaBASIC.Language.Parsing.Nodes;
 
-namespace NovaBasicLanguage.Language.Parsing.Nodes;
+namespace NovaBasicLanguage.Language.Parsing.Nodes.Declarations;
 
 public class FunctionDeclarationNode(string name, string[] parameters, AstNode[] body) : AstNode
 {

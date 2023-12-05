@@ -4,8 +4,10 @@ using NovaBASIC.Language.Parsing;
 using NovaBASIC.Language.Parsing.Parsers.Attribute;
 using NovaBASIC.Language.Lexicon;
 using NovaBasicLanguage.Language.Parsing.Nodes;
-using NovaBasicLanguage.Language.Parsing.Nodes.Array;
 using NovaBasicLanguage.Extensions;
+using NovaBASIC.Extensions;
+using NovaBasicLanguage.Language.Parsing.Nodes.Declarations;
+using NovaBasicLanguage.Language.Parsing.Nodes.Instances;
 
 namespace NovaBasicLanguage.Language.Parsing.Parsers;
 
@@ -22,10 +24,16 @@ public class NewInstanceParser : INodeParser
             return new NewInstanceNode(ParseArray(tokens, parser));
         }
 
+        //Struct initializing
+        if(tokens.NextTokenIs(token => token.IsVariable()))
+        {
+            return new NewInstanceNode(ParseStruct(tokens, parser));
+        }
+
         return new NewInstanceNode(parser.ParseTerm());
     }
 
-    public static AstNode ParseArray(Queue<string> tokens, Parser parser)
+    private static AstNode ParseArray(Queue<string> tokens, Parser parser)
     {
         tokens.Dequeue(); //Pop '['.
 
@@ -39,11 +47,32 @@ public class NewInstanceParser : INodeParser
 
         if(tokens.NextTokenIs(Tokens.OPENING_BRACKET))
         {
-            return new ArrayDeclarationNode(size, ParseArray(tokens, parser) as ArrayDeclarationNode);
+            return new ArrayInstanceNode(size, ParseArray(tokens, parser) as ArrayInstanceNode);
         }
         else
         {
-            return new ArrayDeclarationNode(size);
+            return new ArrayInstanceNode(size);
         }
+    }
+
+    private AstNode ParseStruct(Queue<string> tokens, Parser parser)
+    {
+        var structName = tokens.Dequeue();
+        var parameters = new List<AstNode>();
+        if(tokens.NextTokenIs(Tokens.OPENING_PARENTHESIS))
+        {
+            tokens.Dequeue(); //Pop '('.
+            while (!tokens.NextTokenIs(Tokens.CLOSING_PARENTHESIS))
+            {
+                parameters.Add(parser.ParseTernary());
+                if(tokens.NextTokenIs(Tokens.COMMA))
+                {
+                    tokens.Dequeue();
+                }
+            }
+            tokens.Dequeue(); //Pop ')'.
+        }
+
+        return new StructInstanceNode(structName, [.. parameters]);
     }
 }

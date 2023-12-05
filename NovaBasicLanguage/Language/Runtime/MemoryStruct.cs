@@ -12,6 +12,11 @@ public class MemoryStruct(string name, string[] fields)
         return Fields.ContainsKey(name);
     }
 
+    public IReadOnlyCollection<string> GetFields()
+    {
+        return fields.AsReadOnly();
+    }
+
     public void SetFieldValue(string field, object? value)
     {
         if (!ContainsField(field))
