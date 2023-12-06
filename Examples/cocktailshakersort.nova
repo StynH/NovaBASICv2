@@ -1,0 +1,56 @@
+FUNC cocktailShakerSort(arrRef)
+    LET n = COUNT(arrRef)
+    LET swapped = true
+
+    REPEAT
+        swapped = false
+
+        FOR LET i = 0 TO n - 2
+            IF arrRef[i] > arrRef[i + 1] THEN
+                swap(arrRef, i, i + 1)
+                swapped = true
+            ENDIF
+        ENDFOR
+
+        IF swapped == false THEN
+            BREAK
+        ENDIF
+
+        swapped = false
+
+        FOR LET i = n - 2 TO 0 STEP -1
+            IF arrRef[i] > arrRef[i + 1] THEN
+                swap(arrRef, i, i + 1)
+                swapped = true
+            ENDIF
+        ENDFOR
+    UNTIL swapped == false
+ENDFUNC
+
+FUNC swap(arrRef, i, j)
+    LET temp = arrRef[i]
+    arrRef[i] = arrRef[j]
+    arrRef[j] = temp
+ENDFUNC
+
+FUNC printArray(arrRef)
+    FOR LET i = 0 TO COUNT(arrRef)
+        PRINT arrRef[i]
+    ENDFOR
+ENDFUNC
+
+FUNC randomizeArray(arrRef)
+    FOR LET i = 0 TO COUNT(arrRef)
+        arrRef[i] = RAND(1, 100)
+    ENDFOR
+ENDFUNC
+
+LET arr = NEW [10]
+randomizeArray(REF arr)
+
+PRINT "-----[BEFORE SORT]-----"
+printArray(arr)
+
+PRINT "-----[AFTER SORT]-----"
+cocktailShakerSort(REF arr)
+printArray(arr)

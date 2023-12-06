@@ -5,6 +5,8 @@ namespace NovaBASIC.Language.Lexicon;
 
 public static partial class Tokens
 {
+    public const string NEGATIVE_NUMERALS_PATTERN = "-\\d+(\\.\\d+)?";
+
     // Operators
     public const string PLUS = "+";
     public const string MINUS = "-";

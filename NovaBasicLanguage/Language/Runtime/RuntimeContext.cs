@@ -146,7 +146,7 @@ public class RuntimeContext(bool isGlobal = false, bool isIsolated = false, Runt
     {
         if (!_structDefinitions.TryGetValue(structName, out MemoryStruct? memoryStruct))
         {
-            throw new UnknownStructDeclarationException(structName);
+            return _parentRuntimeContext?.CreateNewStructInstance(structName) ?? throw new UnknownStructDeclarationException(structName);
         }
 
         return memoryStruct.NewInstance();

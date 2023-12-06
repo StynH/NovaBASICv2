@@ -1,0 +1,48 @@
+FUNC optimizedBubbleSort(arr)
+    LET n = COUNT(arr)
+    LET swapped = true
+
+    FOR LET i = 0 TO n - 1
+        swapped = false
+        FOR LET j = 0 TO n - i - 1
+            IF arr[j] > arr[j+1] THEN
+                LET temp = arr[j]
+                arr[j] = arr[j+1]
+                arr[j+1] = temp
+                swapped = true
+            ENDIF
+        ENDFOR
+
+        IF swapped == false THEN
+            BREAK
+        ENDIF
+    ENDFOR
+ENDFUNC
+
+FUNC swap(arrRef, i, j)
+    LET temp = arrRef[i]
+    arrRef[i] = arrRef[j]
+    arrRef[j] = temp
+ENDFUNC
+
+FUNC printArray(arrRef)
+    FOR LET i = 0 TO COUNT(arrRef)
+        PRINT arrRef[i]
+    ENDFOR
+ENDFUNC
+
+FUNC randomizeArray(arrRef)
+    FOR LET i = 0 TO COUNT(arrRef)
+        arrRef[i] = RAND(1, 100)
+    ENDFOR
+ENDFUNC
+
+LET arr = NEW [10]
+randomizeArray(REF arr)
+
+PRINT "-----[BEFORE SORT]-----"
+printArray(arr)
+
+PRINT "-----[AFTER SORT]-----"
+optimizedBubbleSort(REF arr)
+printArray(arr)

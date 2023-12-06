@@ -1,0 +1,66 @@
+STRUCT Stack
+    MaxSize,
+    Top,
+    Inner
+ENDSTRUCT
+
+FUNC initializeStack(maxSize)
+    RETURN NEW Stack(maxSize, 0, NEW [maxSize])
+ENDFUNC
+
+FUNC isEmpty(stackRef)
+    RETURN stackRef.Top == 0
+ENDFUNC
+
+FUNC push(stackRef, var)
+    IF stackRef.Top == stackRef.MaxSize THEN
+        PRINT "Stack overflow!"
+        RETURN
+    ENDIF
+
+    stackRef.Inner[stackRef.Top] = var
+    stackRef.Top = stackRef.Top + 1
+ENDFUNC
+
+FUNC peek(stackRef)
+    RETURN stackRef.Inner[stackRef.Top - 1]
+ENDFUNC
+
+FUNC pop(stackRef)
+    IF isEmpty(stackRef) THEN
+        PRINT "Cannot pop, stack is empty!"
+        RETURN null
+    ENDIF
+
+    stackRef.Top = stackRef.Top - 1
+    LET data = stackRef.Inner[stackRef.Top]
+    RETURN data
+ENDFUNC
+
+LET stack = initializeStack(8)
+
+PRINT "----[IsEmpty]----"
+PRINT isEmpty(stack)
+
+PRINT "----[Push]----"
+push(REF stack, 8)
+push(REF stack, 16)
+push(REF stack, 32)
+push(REF stack, 64)
+push(REF stack, 128)
+PRINT stack
+
+PRINT "----[Peek]----"
+PRINT peek(stack)
+
+PRINT "----[Pop]----"
+PRINT pop(stack)
+PRINT peek(stack)
+
+
+PRINT "----[Overflow]----"
+push(REF stack, 128)
+push(REF stack, 256)
+push(REF stack, 512)
+push(REF stack, 1024)
+push(REF stack, 2048)

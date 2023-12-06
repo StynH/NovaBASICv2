@@ -39,4 +39,11 @@ public class MemoryStruct(string name, string[] fields)
     {
         return new(name, fields);
     }
+
+    public override string ToString()
+    {
+        return $"[{Name}] {{" + Environment.NewLine +
+                    string.Join(Environment.NewLine, Fields) + Environment.NewLine +
+               "}";
+    }
 }

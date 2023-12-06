@@ -258,7 +258,7 @@ public partial class Interpreter : INodeVisitor
         var conditionMemoryItem = ExecuteNode(node.Condition).GetStoredItem()!;
         var untilCondition = Convert.ToInt32(ExecuteNodeAndGetResultValue(node.Until));
         var stepSize = Convert.ToInt32(ExecuteNodeAndGetResultValue(node.StepSize));
-        while (Convert.ToInt32(conditionMemoryItem.GetValue()) < untilCondition)
+        while (Convert.ToInt32(conditionMemoryItem.GetValue()) != untilCondition)
         {
             if (_breakIsCalled || _returnIsCalled)
             {
@@ -405,9 +405,9 @@ public partial class Interpreter : INodeVisitor
 
     public void Visit(FieldAssignNode node)
     {
-        var variable = ExecuteNode(node.Term).GetStoredItem()!;
-        var value = ExecuteNode(node.Value).GetStoredItem()!.GetValue();
-        variable.SetValue(value);
+        var variable = ExecuteNodeAndGetResultValue(node.Term) as MemoryStruct;
+        var value = ExecuteNodeAndGetResultValue(node.Value)!;
+        variable?.SetFieldValue(node.Field, value);
         Result.ToNull();
     }
 

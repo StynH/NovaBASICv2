@@ -115,7 +115,7 @@ public partial class Parser
     private AstNode ProcessVariableToken(string token)
     {
         AstNode term = new VariableNode(token);
-        if (_tokens.TryPeek(out var next))
+        while (_tokens.TryPeek(out var next))
         {
             switch (next)
             {
