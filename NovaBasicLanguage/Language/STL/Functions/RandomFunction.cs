@@ -15,8 +15,8 @@ public class RandomFunction : IStlFunction
     {
         if (node is RandomNode randomNode)
         {
-            var min = interpreter.ExecuteNode(randomNode.Min);
-            var max = interpreter.ExecuteNode(randomNode.Max);
+            var min = interpreter.ExecuteNodeAndGetResultValue(randomNode.Min)!;
+            var max = interpreter.ExecuteNodeAndGetResultValue(randomNode.Max)!;
 
             switch(min)
             {

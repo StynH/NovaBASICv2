@@ -14,8 +14,8 @@ public class PrintFunction : IStlFunction
     {
         if(node is PrintNode printNode)
         {
-            var result = interpreter.ExecuteNode(printNode.Message)?.ToString();
-            Console.WriteLine(result); //TODO: Print to the actual webpage.
+            var result = interpreter.ExecuteNodeAndGetResultValue(printNode.Message);
+            Console.WriteLine(result?.ToString()); //TODO: Print to the actual webpage.
         }
 
         return null;

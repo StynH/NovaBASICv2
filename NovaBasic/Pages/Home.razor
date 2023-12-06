@@ -30,17 +30,17 @@
 
     private async Task RunCodeAsync(MouseEventArgs args){
         var code = await JSRuntime.InvokeAsync<string>("getMonacoEditorValue");
+        var lexer = new Lexer();
+        lexer.LoadCodeIntoLexer(code);
+
+        var parser = new Parser(lexer);
+        var program = parser.GetProgram();
+
+        var interpreter = new Interpreter();
+        interpreter.InitializeMethodCache();
 
         try
         {
-            var lexer = new Lexer();
-            lexer.LoadCodeIntoLexer(code);
-
-            var parser = new Parser(lexer);
-            var program = parser.GetProgram();
-
-            var interpreter = new Interpreter();
-            interpreter.InitializeMethodCache();
             interpreter.RunProgram(program);
 
             _error = null;

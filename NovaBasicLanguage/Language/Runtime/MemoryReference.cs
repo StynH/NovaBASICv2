@@ -2,7 +2,7 @@
 
 namespace NovaBasicLanguage.Language.Runtime;
 
-public class MemoryReference(IReferencable referencable) : IReferencable
+public class MemoryReference(IReferencable referencable) : MemoryStorable, IReferencable
 {
     public IReferencable Referencable { get; set; } = referencable;
 
@@ -19,5 +19,23 @@ public class MemoryReference(IReferencable referencable) : IReferencable
         }
 
         throw new NullReferenceException(nameof(Referencable));
+    }
+
+    public override void SetValue(object? value)
+    {
+        if (Referencable is MemoryStorable memoryStorable)
+        {
+            memoryStorable.SetValue(value);
+        }
+    }
+
+    public override object? GetValue()
+    {
+        if (Referencable is MemoryStorable memoryStorable)
+        {
+            return memoryStorable.GetValue();
+        }
+
+        return null;
     }
 }

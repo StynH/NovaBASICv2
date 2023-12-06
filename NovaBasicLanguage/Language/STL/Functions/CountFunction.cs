@@ -14,7 +14,7 @@ public class CountFunction : IStlFunction
     {
         if (node is CountNode countNode)
         {
-            var result = interpreter.ExecuteNode(countNode.Operand);
+            var result = interpreter.ExecuteNodeAndGetResultValue(countNode.Operand)!;
             var arr = result as Array;
             if (arr != null)
             {

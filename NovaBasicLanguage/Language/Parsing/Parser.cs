@@ -114,31 +114,39 @@ public partial class Parser
 
     private AstNode ProcessVariableToken(string token)
     {
+        AstNode term = new VariableNode(token);
         if (_tokens.TryPeek(out var next))
         {
             switch (next)
             {
                 case Tokens.OPENING_PARENTHESIS:
-                    return _tokenParsers["FUNC_CALL"].Parse(_tokens, token, this);
+                    term = _tokenParsers["FUNC_CALL"].Parse(_tokens, token, this);
+                    break;
 
                 case Tokens.OPENING_BRACKET:
-                    return ProcessArrayCallOrAssignment(token);
+                    term = ProcessArrayCallOrAssignment(term);
+                    break;
 
                 case Tokens.ACCESSOR:
-                    return ProcessFieldCallOrAssignment(token);
+                    term = ProcessFieldCallOrAssignment(term);
+                    break;
 
                 case Tokens.SET:
                     _tokens.Dequeue();
-                    return new VariableDeclarationNode(token, ParseTernary());
+                    term = new VariableDeclarationNode(term, ParseTernary());
+                    break;
+
+                default:
+                    return term;
             }
         }
 
-        return new VariableNode(token);
+        return term;
     }
 
-    private AstNode ProcessArrayCallOrAssignment(string token)
+    private AstNode ProcessArrayCallOrAssignment(AstNode term)
     {
-        var arrayIndexing = ParseArrayIndexing(new VariableNode(token));
+        var arrayIndexing = ParseArrayIndexing(term);
 
         if (_tokens.NextTokenIs(Tokens.SET))
         {
@@ -163,17 +171,17 @@ public partial class Parser
         return new ArrayIndexingNode(term, index, null);
     }
 
-    private AstNode ProcessFieldCallOrAssignment(string token)
+    private AstNode ProcessFieldCallOrAssignment(AstNode term)
     {
         _tokens.Dequeue(); //Pop '.' (Accessor).
         var fieldIndexing = _tokens.Dequeue();
         if (_tokens.NextTokenIs(Tokens.SET))
         {
             _tokens.Dequeue(); // Pop '='.
-            return new FieldAssignNode(token, fieldIndexing, ParseTernary());
+            return new FieldAssignNode(term, fieldIndexing, ParseTernary());
         }
 
-        return new FieldAccessorNode(token, fieldIndexing);
+        return new FieldAccessorNode(term, fieldIndexing);
     }
 
     private static AstNode BalanceNode(AstNode node)

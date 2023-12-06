@@ -20,8 +20,8 @@ public class ComparisonFunction : IStlFunction
                 return ExecuteOr(interpreter, binaryNode);
             }
 
-            var lhs = interpreter.ExecuteNode(binaryNode.Left) as dynamic;
-            var rhs = interpreter.ExecuteNode(binaryNode.Right) as dynamic;
+            var lhs = interpreter.ExecuteNodeAndGetResultValue(binaryNode.Left) as dynamic;
+            var rhs = interpreter.ExecuteNodeAndGetResultValue(binaryNode.Right) as dynamic;
 
             return binaryNode.Op switch
             {

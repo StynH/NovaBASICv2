@@ -43,8 +43,8 @@ public partial class Interpreter : INodeVisitor
 
     private void ExecuteStlFunction(AstNode node, string functionName)
     {
-        Result = _stl
+        Result.Set(_stl
             .GetFunction(functionName)
-            .Execute(this, node);
+            .Execute(this, node));
     }
 }

@@ -2,9 +2,9 @@
 
 namespace NovaBasicLanguage.Language.Parsing.Nodes;
 
-public class FieldAssignNode(string variable, string field, AstNode value) : AstNode
+public class FieldAssignNode(AstNode term, string field, AstNode value) : AstNode
 {
-    public string Variable { get; } = variable;
+    public AstNode Term { get; } = term;
     public string Field { get; } = field;
     public AstNode Value { get; } = value;
 }

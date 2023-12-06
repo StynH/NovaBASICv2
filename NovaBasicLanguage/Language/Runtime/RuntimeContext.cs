@@ -8,7 +8,6 @@ namespace NovaBASIC.Language.Runtime;
 public class RuntimeContext(bool isGlobal = false, bool isIsolated = false, RuntimeContext? parent = null)
 {
     private Dictionary<string, MemoryItem> _variables = [];
-    private Dictionary<string, MemoryReference> _references = [];
     private Dictionary<string, MemoryFunction> _functions = [];
     private Dictionary<string, MemoryStruct> _structDefinitions = [];
 
@@ -19,22 +18,6 @@ public class RuntimeContext(bool isGlobal = false, bool isIsolated = false, Runt
 
     public MemoryItem AssignVariable(string variableName, object? value, bool isImmutable)
     {
-        if (_references.TryGetValue(variableName, out var reference))
-        {
-            var memoryItem = reference.GetReferencedItem();
-            switch (reference)
-            {
-                case MemoryCollectionReference memoryCollectionReference:
-                    return AssignCollectionIndexedValue(memoryItem, memoryCollectionReference, value);
-
-                case MemoryFieldReference memoryFieldReference:
-                    return AssignFieldValue(memoryItem, memoryFieldReference, value);
-
-            }
-
-            return AssignVariable(memoryItem.Name, value, memoryItem.IsImmutable);
-        }
-
         //Variable is in current scope.
         if (_variables.TryGetValue(variableName, out var currentScopeItem))
         {
@@ -116,17 +99,8 @@ public class RuntimeContext(bool isGlobal = false, bool isIsolated = false, Runt
         AssignVariable(memoryItem.Name, memoryItem.Value, memoryItem.IsImmutable);
     }
 
-    public void AssignReference(string variableName, MemoryReference reference)
-    {
-        _references[variableName] = reference;
-    }
-
     public MemoryItem GetVariable(string variableName)
     {
-        if (_references.TryGetValue(variableName, out var reference))
-        {
-            return reference.GetReferencedItem();
-        }
         if (_variables.TryGetValue(variableName, out var item))
         {
             return item;

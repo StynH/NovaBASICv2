@@ -2,8 +2,8 @@
 
 namespace NovaBasicLanguage.Language.Parsing.Nodes;
 
-public class FieldAccessorNode(string variable, string name) : AstNode
+public class FieldAccessorNode(AstNode term, string name) : AstNode
 {
-    public string Variable { get; } = variable;
+    public AstNode Term { get; } = term;
     public string Name { get; } = name;
 }
