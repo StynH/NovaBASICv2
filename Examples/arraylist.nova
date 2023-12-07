@@ -1,0 +1,48 @@
+STRUCT ArrayList
+    Data,
+    Size,
+    Capacity
+ENDSTRUCT
+
+FUNC initializeArrayList(initialCapacity)
+    RETURN NEW ArrayList(NEW [initialCapacity], 0, initialCapacity)
+ENDFUNC
+
+FUNC resizeArrayList(ArrayListRef, newCapacity)
+    LET newArray = NEW [newCapacity]
+    FOR LET i = 0 TO ArrayListRef.Size - 1
+        newArray[i] = ArrayListRef.Data[i]
+    ENDFOR
+
+    ArrayListRef.Data = newArray
+    ArrayListRef.Capacity = newCapacity
+ENDFUNC
+
+FUNC addArrayList(ArrayListRef, element)
+    IF ArrayListRef.Size == ArrayListRef.Capacity THEN
+        resizeArrayList(ArrayListRef, ArrayListRef.Capacity * 2)
+    ENDIF
+
+    ArrayListRef.Data[ArrayListRef.Size] = element
+    ArrayListRef.Size = ArrayListRef.Size + 1
+ENDFUNC
+
+FUNC getArrayList(ArrayList, index)
+    GUARD index < ArrayList.Size ELSE
+        PRINT "Index out of bounds"
+        RETURN null
+    ENDGUARD
+
+    RETURN ArrayList.Data[index]
+ENDFUNC
+
+LET myArray = initializeArrayList(4)
+
+addArrayList(REF myArray, 2)
+addArrayList(REF myArray, 4)
+addArrayList(REF myArray, 6)
+addArrayList(REF myArray, 8)
+addArrayList(REF myArray, 16)
+addArrayList(REF myArray, 32)
+
+PRINT getArrayList(myArray, 5)
