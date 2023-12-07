@@ -225,6 +225,11 @@ public partial class Interpreter : INodeVisitor
         _returnIsCalled = true;
     }
 
+    public void Visit(NotNode node)
+    {
+        Result.Set(!(bool)ExecuteNodeAndGetResultValue(node.Condition)!);
+    }
+
     public void Visit(BreakNode _)
     {
         _breakIsCalled = true;
@@ -248,6 +253,24 @@ public partial class Interpreter : INodeVisitor
         else
         {
             node.Else?.Accept(this);
+        }
+    }
+
+    public void Visit(GuardNode node)
+    {
+        var conditionResult = (bool)ExecuteNodeAndGetResultValue(node.Condition)!;
+        if (!conditionResult)
+        {
+            CreateScope();
+            foreach (var expr in node.TrueBody)
+            {
+                ExecuteNode(expr);
+                if (_returnIsCalled)
+                {
+                    break;
+                }
+            }
+            PopScope();
         }
     }
 

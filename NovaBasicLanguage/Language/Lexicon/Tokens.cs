@@ -64,8 +64,7 @@ public static partial class Tokens
     public const string KEYWORD_TO = "TO";
     public const string KEYWORD_STEP = "STEP";
     public const string KEYWORD_BREAK = "BREAK";
-    public const string KEYWORD_GOTO = "GOTO";
-    public const string KEYWORD_BY = "BY";
+    public const string KEYWORD_NOT = "NOT";
 
     public static string BuildRegexPattern()
     {

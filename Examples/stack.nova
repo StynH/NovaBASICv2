@@ -13,10 +13,10 @@ FUNC isEmpty(stackRef)
 ENDFUNC
 
 FUNC push(stackRef, var)
-    IF stackRef.Top == stackRef.MaxSize THEN
+    GUARD stackRef.Top < stackRef.MaxSize ELSE
         PRINT "Stack overflow!"
         RETURN
-    ENDIF
+    ENDGUARD
 
     stackRef.Inner[stackRef.Top] = var
     stackRef.Top = stackRef.Top + 1
@@ -27,10 +27,10 @@ FUNC peek(stackRef)
 ENDFUNC
 
 FUNC pop(stackRef)
-    IF isEmpty(stackRef) THEN
+    GUARD NOT isEmpty(stackRef) ELSE
         PRINT "Cannot pop, stack is empty!"
         RETURN null
-    ENDIF
+    ENDGUARD
 
     stackRef.Top = stackRef.Top - 1
     LET data = stackRef.Inner[stackRef.Top]
