@@ -1,0 +1,59 @@
+STRUCT LinkedListNode
+    Value,
+    Next
+ENDSTRUCT
+
+FUNC insertEnd(linkedList, value)
+    LET current = linkedList
+    WHILE current.Next != null
+        current = current.Next
+    ENDWHILE
+
+    current.Next = NEW LinkedListNode(value, null)
+ENDFUNC
+
+FUNC get(linkedList, index)
+    LET currentIndex = 0
+    LET current = linkedList
+
+    LET listLength = length(linkedList);
+    GUARD listLength >= index ELSE
+        PRINT "Index " + index + " out of bounds! Length: " + listLength
+        RETURN null
+    ENDGUARD
+
+    WHILE currentIndex < index
+        current = current.Next
+        currentIndex = currentIndex + 1
+
+        IF currentIndex == index THEN
+            BREAK
+        ENDIF
+    ENDWHILE
+
+    RETURN current.Value
+ENDFUNC
+
+FUNC length(linkedList)
+    LET length = 0
+    LET current = linkedList
+    WHILE current.Next != null
+        current = current.Next
+        length = length + 1
+    ENDWHILE
+
+    RETURN length
+ENDFUNC
+
+PRINT "--------------------------------------"
+LET list = NEW LinkedListNode(2, null)
+insertEnd(list, 4)
+insertEnd(list, 8)
+insertEnd(list, 16)
+insertEnd(list, 32)
+insertEnd(list, 64)
+insertEnd(list, 128)
+
+LET item = get(list, 6)
+PRINT "Item: " + item
+PRINT "--------------------------------------"
