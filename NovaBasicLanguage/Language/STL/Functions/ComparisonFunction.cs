@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace NovaBASIC.Language.STL.Functions;
 
-[StlFunction("COMPARISON")]
+[StlFunction(typeof(BinaryNode))]
 public class ComparisonFunction : IStlFunction
 {
     public object? Execute(Interpreter interpreter, AstNode node)

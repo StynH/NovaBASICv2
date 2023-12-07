@@ -1,4 +1,5 @@
-﻿using NovaBASIC.Language.Interpreting;
+﻿using NovaBasic.Language.STL.Nodes;
+using NovaBASIC.Language.Interpreting;
 using NovaBASIC.Language.Lexicon;
 using NovaBASIC.Language.Parsing.Nodes;
 using NovaBASIC.Language.STL.Attribute;
@@ -8,7 +9,7 @@ using NovaBasicLanguage.Language.STL.Nodes;
 
 namespace NovaBasicLanguage.Language.STL.Functions;
 
-[StlFunction(Tokens.RAND_STL)]
+[StlFunction(typeof(RandomNode))]
 public class RandomFunction : IStlFunction
 {
     public object? Execute(Interpreter interpreter, AstNode node)

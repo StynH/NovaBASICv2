@@ -1,13 +1,12 @@
 ﻿using NovaBasic.Language.STL.Nodes;
 using NovaBASIC.Language.Interpreting;
-using NovaBASIC.Language.Lexicon;
 using NovaBASIC.Language.Parsing.Nodes;
 using NovaBASIC.Language.STL.Attribute;
 using NovaBASIC.Language.STL.Functions.Interface;
 
 namespace NovaBasic.Language.STL.Functions;
 
-[StlFunction(Tokens.PRINT_STL)]
+[StlFunction(typeof(PrintNode))]
 public class PrintFunction : IStlFunction
 {
     public object? Execute(Interpreter interpreter, AstNode node)

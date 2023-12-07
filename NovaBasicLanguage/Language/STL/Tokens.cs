@@ -19,6 +19,7 @@ public static partial class Tokens
     public const string SIN_STL = "SIN";
     public const string COS_STL = "COS";
     public const string TAN_STL = "TAN";
+    public const string TO_ARRAY_STL = "TO_ARRAY";
 
     // Patterns
     public const string FLOAT_PATTERN = "\\d+\\.\\d+";

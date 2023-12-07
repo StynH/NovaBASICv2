@@ -1,10 +1,7 @@
-﻿using NovaBasic.Language.STL.Nodes;
-using NovaBASIC.Language.Interpreting.Interface;
-using NovaBASIC.Language.Lexicon;
+﻿using NovaBASIC.Language.Interpreting.Interface;
 using NovaBASIC.Language.Parsing.Nodes;
 using NovaBASIC.Language.STL;
-using NovaBasicLanguage.Language.STL.Nodes;
-
+using NovaBASIC.Language.STL.Functions.Interface;
 namespace NovaBASIC.Language.Interpreting;
 
 public partial class Interpreter : INodeVisitor
@@ -16,35 +13,15 @@ public partial class Interpreter : INodeVisitor
         _stl.RegisterStandardVariables(_runtimeContext);
     }
 
-    public void Visit(BinaryNode node)
+    public void VisitStl(AstNode node)
     {
-        ExecuteStlFunction(node, "COMPARISON");
-    }
-
-    public void Visit(PrintNode node)
-    {
-        ExecuteStlFunction(node, Tokens.PRINT_STL);
-    }
-
-    public void Visit(TrigonometricNode node)
-    {
-        ExecuteStlFunction(node, "MATHHELPERS");
-    }
-
-    public void Visit(CountNode node)
-    {
-        ExecuteStlFunction(node, Tokens.COUNT_STL);
-    }
-
-    public void Visit(RandomNode node)
-    {
-        ExecuteStlFunction(node, Tokens.RAND_STL);
-    }
-
-    private void ExecuteStlFunction(AstNode node, string functionName)
-    {
-        Result.Set(_stl
-            .GetFunction(functionName)
-            .Execute(this, node));
+        if (_stl.TryGetFunction(node.GetType(), out var stlFunction))
+        {
+            Result.Set(stlFunction!.Execute(this, node));
+        }
+        else
+        {
+            throw new MissingMethodException("No Visit method found for type " + node.GetType());
+        }
     }
 }

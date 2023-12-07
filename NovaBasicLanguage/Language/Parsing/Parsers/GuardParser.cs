@@ -6,6 +6,7 @@ using NovaBASIC.Language.Parsing.Parsers.Interface;
 using NovaBASIC.Language.Parsing;
 using NovaBasicLanguage.Extensions;
 using NovaBasicLanguage.Language.Parsing.Nodes;
+using NovaBasicLanguage.Language.Exceptions.Assertion;
 
 namespace NovaBasicLanguage.Language.Parsing.Parsers;
 
@@ -15,12 +16,7 @@ public class GuardParser : INodeParser
     public AstNode Parse(Queue<string> tokens, string currentToken, Parser parser)
     {
         var condition = parser.ParseTernary();
-        if (!tokens.NextTokenIs(Tokens.KEYWORD_ELSE))
-        {
-            throw new MalformedStatementException(Tokens.KEYWORD_GUARD, Tokens.KEYWORD_ELSE);
-        }
-
-        tokens.Dequeue(); //Pop 'ELSE'.
+        Assert.NextTokenIsCorrectThenDequeue(tokens, Tokens.KEYWORD_GUARD, Tokens.KEYWORD_ELSE);
 
         var terminatedCorrectly = false;
         var body = new List<AstNode>();

@@ -7,7 +7,7 @@ using NovaBasicLanguage.Language.STL.Nodes;
 
 namespace NovaBasic.Language.STL.Functions;
 
-[StlFunction(Tokens.COUNT_STL)]
+[StlFunction(typeof(CountNode))]
 public class CountFunction : IStlFunction
 {
     public object? Execute(Interpreter interpreter, AstNode node)

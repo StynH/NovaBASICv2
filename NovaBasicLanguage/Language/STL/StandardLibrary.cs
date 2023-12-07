@@ -9,7 +9,7 @@ namespace NovaBASIC.Language.STL;
 
 public class StandardLibrary
 {
-    private readonly Dictionary<string, IStlFunction> functions = [];
+    private readonly Dictionary<Type, IStlFunction> functions = [];
 
     public StandardLibrary()
     {
@@ -26,7 +26,7 @@ public class StandardLibrary
         {
             var attribute = (StlFunctionAttribute)type.GetCustomAttributes(typeof(StlFunctionAttribute), false).First();
             var functionInstance = Activator.CreateInstance(type) as IStlFunction;
-            functions.Add(attribute.FunctionName, functionInstance!);
+            functions.Add(attribute.AssociatedNodeType, functionInstance!);
         }
     }
 
@@ -38,19 +38,24 @@ public class StandardLibrary
         }
     }
 
-    public IStlFunction GetFunction(string name)
+    public IStlFunction GetFunction(Type nodeType)
     {
-        if (functions.TryGetValue(name, out var function))
+        if (functions.TryGetValue(nodeType, out var function))
         {
             return function;
         }
 
-        throw new Exception($"Function '{name}' not found in the standard library.");
+        throw new Exception($"Function for node '{nodeType}' not found in the standard library.");
     }
 
     public static bool IsKnownToken(string token)
     {
         //TODO: Extend and streamline this.
         return MathHelperFunctionsParser.KNOWN_TOKENS.Contains(token) || token.Equals(Tokens.RAND_STL);
+    }
+
+    public bool TryGetFunction(Type type, out IStlFunction? stlFunction)
+    {
+        return functions.TryGetValue(type, out stlFunction);
     }
 }

@@ -7,14 +7,14 @@ using NovaBasic.Language.STL.Nodes;
 
 namespace NovaBasic.Language.STL.Functions;
 
-[StlFunction("MATHHELPERS")]
+[StlFunction(typeof(TrigonometricNode))]
 public class MathHelpersFunction : IStlFunction
 {
     public object? Execute(Interpreter interpreter, AstNode node)
     {
         if (node is TrigonometricNode trigonometricNode)
         {
-            var operand = interpreter.ExecuteNode(trigonometricNode.Operand) as dynamic;
+            var operand = interpreter.ExecuteNodeAndGetResultValue(trigonometricNode.Operand) as dynamic;
             switch(trigonometricNode.FuncName)
             {
                 case Tokens.SIN_STL:

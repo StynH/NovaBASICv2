@@ -52,7 +52,8 @@ public partial class Interpreter : INodeVisitor
             }
             else
             {
-                throw new MissingMethodException("No Visit method found for type " + nodeType);
+                VisitStl(node);
+                return;
             }
         }
 

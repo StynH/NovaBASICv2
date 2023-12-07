@@ -1,4 +1,5 @@
 ﻿using NovaBasicLanguage.Language.Exceptions;
+using System.Collections.Generic;
 
 namespace NovaBasicLanguage.Language.Runtime;
 
@@ -45,5 +46,10 @@ public class MemoryStruct(string name, string[] fields)
         return $"[{Name}] {{" + Environment.NewLine +
                     string.Join(Environment.NewLine, Fields) + Environment.NewLine +
                "}";
+    }
+
+    public object?[] ToArray()
+    {
+        return Fields.SelectMany(kvp => new[] { new object?[] { kvp.Key, kvp.Value } }).ToArray();
     }
 }
