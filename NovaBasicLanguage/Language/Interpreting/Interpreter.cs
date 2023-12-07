@@ -136,7 +136,7 @@ public partial class Interpreter : INodeVisitor
         switch (variable)
         {
             case RawValue newVariable:
-                var newVal = _runtimeContext.AssignVariable((string)newVariable.GetValue()!, value, false);
+                var newVal = _runtimeContext.AssignVariable((string)newVariable.GetValue()!, value, node.IsImmutable);
                 Result.Set(newVal);
                 break;
             case MemoryStorable memoryStorable:

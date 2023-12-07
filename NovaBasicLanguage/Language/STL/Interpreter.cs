@@ -1,7 +1,7 @@
 ﻿using NovaBASIC.Language.Interpreting.Interface;
 using NovaBASIC.Language.Parsing.Nodes;
 using NovaBASIC.Language.STL;
-using NovaBASIC.Language.STL.Functions.Interface;
+
 namespace NovaBASIC.Language.Interpreting;
 
 public partial class Interpreter : INodeVisitor

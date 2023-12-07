@@ -1,4 +1,5 @@
-﻿using NovaBasicLanguage.Language.Runtime;
+﻿using NovaBasic.Language.Exceptions;
+using NovaBasicLanguage.Language.Runtime;
 
 namespace NovaBASIC.Language.Runtime;
 
@@ -20,6 +21,11 @@ public class MemoryItem(string name, object? value, bool isImmutable) : MemorySt
 
     public override void SetValue(object? value)
     {
+        if(IsImmutable)
+        {
+            throw new MutabilityViolationException(Name);
+        }
+
         if (Value is MemoryStorable memoryStorable)
         {
             memoryStorable.SetValue(value);

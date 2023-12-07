@@ -23,26 +23,36 @@ public class ComparisonFunction : IStlFunction
             var lhs = interpreter.ExecuteNodeAndGetResultValue(binaryNode.Left) as dynamic;
             var rhs = interpreter.ExecuteNodeAndGetResultValue(binaryNode.Right) as dynamic;
 
-            return binaryNode.Op switch
+            if(lhs is object[] lhsArray && rhs is object[] rhsArray)
             {
-                Tokens.PLUS => Operations.Add(lhs, rhs),
-                Tokens.MINUS => lhs - rhs,
-                Tokens.DIVIDE => lhs / rhs,
-                Tokens.MULTIPLY => lhs * rhs,
-                Tokens.MODULO => lhs % rhs,
-                Tokens.EQUALS => lhs == rhs,
-                Tokens.NOT_EQUALS => lhs != rhs,
-                Tokens.GTE => lhs >= rhs,
-                Tokens.LTE => lhs <= rhs,
-                Tokens.LT => lhs < rhs,
-                Tokens.GT => lhs > rhs,
-                Tokens.AND => lhs && rhs,
-                Tokens.MATCHES_STL => Regex.IsMatch(lhs, rhs),
-                _ => throw new ArithmeticException($"Unknown arithmetic operator '{binaryNode.Op}'."),
-            };
+                return ExecuteArrayOperation(binaryNode.Op, lhsArray, rhsArray);
+            }
+
+            return ExecuteOperand(binaryNode.Op, lhs, rhs);
         }
 
         return null;
+    }
+
+    private static object? ExecuteOperand(string op, dynamic lhs, dynamic rhs)
+    {
+        return op switch
+        {
+            Tokens.PLUS => Operations.Add(lhs, rhs),
+            Tokens.MINUS => lhs - rhs,
+            Tokens.DIVIDE => lhs / rhs,
+            Tokens.MULTIPLY => lhs * rhs,
+            Tokens.MODULO => lhs % rhs,
+            Tokens.EQUALS => lhs == rhs,
+            Tokens.NOT_EQUALS => lhs != rhs,
+            Tokens.GTE => lhs >= rhs,
+            Tokens.LTE => lhs <= rhs,
+            Tokens.LT => lhs < rhs,
+            Tokens.GT => lhs > rhs,
+            Tokens.AND => lhs && rhs,
+            Tokens.MATCHES_STL => Regex.IsMatch(lhs, rhs),
+            _ => throw new ArithmeticException($"Unknown arithmetic operator '{op}'."),
+        };
     }
 
     private static object? ExecuteOr(Interpreter interpreter, BinaryNode binaryNode)
@@ -53,5 +63,18 @@ public class ComparisonFunction : IStlFunction
             return true;
         }
         return interpreter.ExecuteNode(binaryNode.Right);
+    }
+
+    private object[] ExecuteArrayOperation(string op, object[] lhsArray, object[] rhsArray)
+    {
+        for (var i = 0; i < lhsArray.Length; i++)
+        {
+            if (i >= rhsArray.Length)
+            {
+                break;
+            }
+            lhsArray[i] = ExecuteOperand(op, lhsArray[i] as dynamic, rhsArray[i] as dynamic);
+        }
+        return lhsArray;
     }
 }
