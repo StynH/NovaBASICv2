@@ -40,4 +40,20 @@ public static class Operations
             return false;
         }
     }
+
+    public static bool ToBool(object? value)
+    {
+        if (value is null)
+        {
+            return false;
+        }
+
+        return value switch
+        {
+            int intValue => intValue != 0,
+            string stringValue => bool.TryParse(stringValue, out bool parsedString) && parsedString,
+            bool boolValue => boolValue,
+            _ => throw new InvalidCastException($"Unable to cast typeof '{value.GetType()}' to bool."),
+        };
+    }
 }

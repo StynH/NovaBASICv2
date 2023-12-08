@@ -1,4 +1,5 @@
 ﻿using NovaBASIC.Language.Interpreting.Interface;
+using NovaBASIC.Language.Interpreting.Safe;
 using NovaBASIC.Language.Parsing.Nodes;
 using NovaBASIC.Language.Runtime;
 using NovaBasicLanguage.Language.Exceptions;
@@ -229,7 +230,7 @@ public partial class Interpreter : INodeVisitor
 
     public void Visit(NotNode node)
     {
-        Result.Set(!(bool)ExecuteNodeAndGetResultValue(node.Condition)!);
+        Result.Set(!Operations.ToBool(ExecuteNodeAndGetResultValue(node.Condition)));
     }
 
     public void Visit(BreakNode _)
@@ -239,7 +240,7 @@ public partial class Interpreter : INodeVisitor
 
     public void Visit(ConditionalNode node)
     {
-        var conditionResult = (bool)ExecuteNodeAndGetResultValue(node.Condition)!;
+        var conditionResult = Operations.ToBool(ExecuteNodeAndGetResultValue(node.Condition));
         if (conditionResult)
         {
             CreateScope();
@@ -260,7 +261,7 @@ public partial class Interpreter : INodeVisitor
 
     public void Visit(GuardNode node)
     {
-        var conditionResult = (bool)ExecuteNodeAndGetResultValue(node.Condition)!;
+        var conditionResult = Operations.ToBool(ExecuteNodeAndGetResultValue(node.Condition));
         if (!conditionResult)
         {
             CreateScope();
@@ -314,7 +315,7 @@ public partial class Interpreter : INodeVisitor
     {
         CreateScope();
 
-        var condition = (bool)ExecuteNodeAndGetResultValue(node.Condition)!;
+        var condition = Operations.ToBool(ExecuteNodeAndGetResultValue(node.Condition));
         while (condition)
         {
             if (_breakIsCalled || _returnIsCalled)
@@ -331,7 +332,7 @@ public partial class Interpreter : INodeVisitor
                 ExecuteNode(bodyNode);
             }
 
-            condition = (bool)ExecuteNodeAndGetResultValue(node.Condition)!;
+            condition = Operations.ToBool(ExecuteNodeAndGetResultValue(node.Condition));
         }
 
         if (_breakIsCalled)
@@ -346,7 +347,7 @@ public partial class Interpreter : INodeVisitor
     {
         CreateScope();
 
-        var condition = (bool)ExecuteNodeAndGetResultValue(node.Condition)!;
+        var condition = Operations.ToBool(ExecuteNodeAndGetResultValue(node.Condition));
         while (!condition)
         {
             if (_breakIsCalled || _returnIsCalled)
@@ -363,7 +364,7 @@ public partial class Interpreter : INodeVisitor
                 ExecuteNode(bodyNode);
             }
 
-            condition = (bool)ExecuteNodeAndGetResultValue(node.Condition)!;
+            condition = Operations.ToBool(ExecuteNodeAndGetResultValue(node.Condition));
         }
 
         if (_breakIsCalled)

@@ -53,7 +53,7 @@ LET i = 6
 IF i % 2 THEN
     PRINT "Value " + i + " is dividable by 2."
 ELSEIF i % 3 THEN
-    PRINT "Value " + i " " is dividable by 3."
+    PRINT "Value " + i + " is dividable by 3."
 ENDIF
 ```
 
