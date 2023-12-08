@@ -50,9 +50,9 @@ myFunc(REF myArray, 4)
 ```
 LET i = 6
 
-IF i % 2 THEN
+IF i % 2 == 0 THEN
     PRINT "Value " + i + " is dividable by 2."
-ELSEIF i % 3 THEN
+ELSEIF i % 3 == 0 THEN
     PRINT "Value " + i + " is dividable by 3."
 ENDIF
 ```
