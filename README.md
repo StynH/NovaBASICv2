@@ -73,3 +73,12 @@ LET j = 20
 myFunc(i)
 myFunc(j)
 ```
+
+### Array Slicing
+```
+LET arr = NEW[10]
+LET firstTwo = arr[:3]
+LET lastSeven = arr[3:]
+LET between = arr[2:5]
+LET inTwo = arr[1:10:2]
+```
