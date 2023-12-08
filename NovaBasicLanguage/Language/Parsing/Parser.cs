@@ -77,7 +77,7 @@ public partial class Parser
                     term = ParseArrayIndexing(term);
                     break;
 
-                case var op when next.IsArithmetic() || next.IsEqualityCheck() || next.IsSTLOperation():
+                case var op when next.IsArithmetic() || next.IsEqualityCheck() || next.IsBitwiseOperator() || next.IsSTLOperation():
                     _tokens.Dequeue();
                     term = BalanceNode(new BinaryNode(term, op, ParseTerm()));
                     break;
@@ -102,6 +102,11 @@ public partial class Parser
         if (StandardLibrary.IsKnownToken(token))
         {
             return ParseStl(token);
+        }
+
+        if (token.IsSliceIndexer(_tokens))
+        {
+            return _tokenParsers["SLICING_INDEX"].Parse(_tokens, token, this);
         }
 
         if (token.IsVariable())

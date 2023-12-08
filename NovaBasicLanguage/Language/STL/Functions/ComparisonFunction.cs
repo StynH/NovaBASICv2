@@ -50,6 +50,11 @@ public class ComparisonFunction : IStlFunction
             Tokens.LT => lhs < rhs,
             Tokens.GT => lhs > rhs,
             Tokens.AND => lhs && rhs,
+            Tokens.BITWISE_AND => lhs & rhs,
+            Tokens.BITWISE_OR => lhs | rhs,
+            Tokens.BITWISE_XOR => lhs ^ rhs,
+            Tokens.BITWISE_LEFT_SHIFT => lhs << rhs,
+            Tokens.BITWISE_RIGHT_SHIFT => lhs >> rhs,
             Tokens.MATCHES_STL => Regex.IsMatch(lhs, rhs),
             _ => throw new ArithmeticException($"Unknown arithmetic operator '{op}'."),
         };

@@ -11,6 +11,7 @@ using NovaBasicLanguage.Language.Parsing.Nodes.Instances;
 using NovaBasicLanguage.Language.Parsing.Nodes.Loops;
 using NovaBasicLanguage.Language.Parsing.Nodes.References;
 using NovaBasicLanguage.Language.Runtime;
+using NovaBasicLanguage.Language.Runtime.Indexing;
 using System.Reflection;
 
 namespace NovaBASIC.Language.Interpreting;
@@ -435,17 +436,32 @@ public partial class Interpreter : INodeVisitor
         Result.ToNull();
     }
 
+    public void Visit(ArraySlicingNode node)
+    {
+        var begin = (int)ExecuteNodeAndGetResultValue(node.Begin)!;
+        var end = (int)ExecuteNodeAndGetResultValue(node.End)!;
+        var step = (int)ExecuteNodeAndGetResultValue(node.Step)!;
+        Result.Set(new SlicingIndexer(begin, end, step));
+    }
+
     public void Visit(ArrayIndexingNode node)
     {
-        var array = node;
         var variable = ExecuteNodeAndGetResultValue(node.Operand)! as dynamic;
-
+        var array = node;
         var result = variable;
         do
         {
             var indexingResult = ExecuteNodeAndGetResultValue(array.Index)!;
-            var index = Convert.ToInt32(indexingResult);
-            result = result![index!];
+            switch (indexingResult)
+            {
+                case IArrayManipulationIndexer arrayManipulationIndexer:
+                    result = arrayManipulationIndexer.HandleArray(result);
+                    break;
+                default:
+                    var index = Convert.ToInt32(indexingResult);
+                    result = result![index!];
+                    break;
+            }
             array = array.Sub;
         }
         while (array is not null);

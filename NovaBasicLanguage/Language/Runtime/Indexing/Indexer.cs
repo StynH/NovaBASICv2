@@ -1,4 +1,4 @@
-﻿namespace NovaBasicLanguage.Language.Runtime;
+﻿namespace NovaBasicLanguage.Language.Runtime.Indexing;
 
 public class Indexer(int index, Indexer? sub = null)
 {

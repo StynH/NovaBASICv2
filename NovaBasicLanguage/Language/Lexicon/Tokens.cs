@@ -17,6 +17,8 @@ public static partial class Tokens
     public const string QUESTION_MARK = "?";
     public const string SEMICOLON = ":";
     public const string COMMA = ",";
+    public const string BITWISE_LEFT_SHIFT = "<<";
+    public const string BITWISE_RIGHT_SHIFT = ">>";
     public const string GTE = ">=";
     public const string LTE = "<=";
     public const string GT = ">";
@@ -32,6 +34,10 @@ public static partial class Tokens
     public const string OR = "||";
     public const string AND = "&&";
     public const string ACCESSOR = ".";
+    public const string BITWISE_AND = "&";
+    public const string BITWISE_OR = "|";
+    public const string BITWISE_XOR = "^";
+    public const string BITWISE_NOT = "~";
 
     // Syntax
     public const string KEYWORD_NEW = "NEW";

@@ -1,9 +1,10 @@
 ﻿using NovaBASIC.Language.Lexicon;
+using NovaBasicLanguage.Extensions;
 using System.Globalization;
 
 namespace NovaBASIC.Extensions;
 
-public static class StringExtensions
+public static partial class StringExtensions
 {
     public static bool IsArithmetic(this string value)
     {
@@ -26,6 +27,16 @@ public static class StringExtensions
             || value.Equals(Tokens.OR);
     }
 
+    public static bool IsBitwiseOperator(this string value)
+    {
+        return value.Equals(Tokens.BITWISE_AND)
+            || value.Equals(Tokens.BITWISE_OR)
+            || value.Equals(Tokens.BITWISE_XOR)
+            || value.Equals(Tokens.BITWISE_LEFT_SHIFT)
+            || value.Equals(Tokens.BITWISE_RIGHT_SHIFT)
+            || value.Equals(Tokens.BITWISE_NOT);
+    }
+
     public static bool IsNumeric(this string input)
     {
         if (string.IsNullOrWhiteSpace(input))
@@ -46,6 +57,12 @@ public static class StringExtensions
             && !input.EndsWith('\"')
             && !input.IsNumeric()
             && !input.IsPrimitive();
+    }
+
+    public static bool IsSliceIndexer(this string input, Queue<string> tokens)
+    {
+        return input.Equals(Tokens.SEMICOLON) && tokens.NextTokenIs(t => t.IsNumeric()) ||
+               input.IsNumeric() && tokens.NextTokenIs(Tokens.SEMICOLON);
     }
 
     public static string RemoveCommentLines(this string input)
