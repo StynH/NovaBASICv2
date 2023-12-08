@@ -209,6 +209,20 @@ public partial class Parser
                     return newRight;
                 }
             }
+
+            if (binaryNode.Left is BinaryNode leftBinaryNode)
+            {
+                var rightPrecedence = GetPrecedence(binaryNode.Op);
+                var leftPrecedence = GetPrecedence(leftBinaryNode.Op);
+
+                if (rightPrecedence > leftPrecedence)
+                {
+                    var newLeft = leftBinaryNode;
+                    binaryNode.Left = newLeft.Right;
+                    newLeft.Right = binaryNode;
+                    return newLeft;
+                }
+            }
         }
         return node;
     }

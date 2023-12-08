@@ -148,6 +148,11 @@ public partial class Interpreter : INodeVisitor
         }
     }
 
+    public void Visit(GroupNode node)
+    {
+        Result.Set(ExecuteNodeAndGetResultValue(node.Inner));
+    }
+
     public void Visit(ReferenceNode node)
     {
         var variable = _runtimeContext.GetVariable(node.VariableName);
