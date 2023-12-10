@@ -135,6 +135,11 @@ public partial class Interpreter : INodeVisitor
         var value = ExecuteNode(node.Assignment)
                         .GetStoredItem();
 
+        if(value is RawValue rawValue)
+        {
+            value = rawValue.Copy();
+        }
+
         switch (variable)
         {
             case RawValue newVariable:

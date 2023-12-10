@@ -1,0 +1,17 @@
+FUNC checkPalindrome(originalInt)
+    LET reverseNum = 0
+    LET tempOriginal = originalInt
+
+    WHILE tempOriginal > 0
+        LET lastDigit = tempOriginal % 10
+        reverseNum = (reverseNum * 10) + lastDigit
+        tempOriginal = tempOriginal / 10
+    ENDWHILE
+
+    RETURN originalInt == reverseNum
+ENDFUNC
+
+PRINT checkPalindrome(1221)
+PRINT checkPalindrome(93)
+PRINT checkPalindrome(-1392)
+PRINT checkPalindrome(339933)
