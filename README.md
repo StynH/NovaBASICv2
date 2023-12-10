@@ -57,6 +57,23 @@ ELSEIF i % 3 == 0 THEN
 ENDIF
 ```
 
+### Switch
+```
+LET dayOfWeek = "Friday"
+
+SWITCH dayOfWeek
+    CASE "Monday":
+        PRINT "Start of the workweek"
+        BREAK
+    CASE "Friday":
+        PRINT "End of the workweek"
+        BREAK
+    DEFAULT:
+        PRINT "Middle of the workweek"
+        BREAK
+ENDSWITCH
+```
+
 ### Guard
 ```
 FUNC myFunc(param)

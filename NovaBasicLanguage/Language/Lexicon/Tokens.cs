@@ -71,6 +71,10 @@ public static partial class Tokens
     public const string KEYWORD_STEP = "STEP";
     public const string KEYWORD_BREAK = "BREAK";
     public const string KEYWORD_NOT = "NOT";
+    public const string KEYWORD_SWITCH = "SWITCH";
+    public const string KEYWORD_END_SWITCH = "ENDSWITCH";
+    public const string KEYWORD_CASE = "CASE";
+    public const string KEYWORD_DEFAULT = "DEFAULT";
 
     public static string BuildRegexPattern()
     {

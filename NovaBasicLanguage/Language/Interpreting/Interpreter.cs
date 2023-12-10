@@ -287,6 +287,51 @@ public partial class Interpreter : INodeVisitor
         }
     }
 
+    public void Visit(SwitchNode node)
+    {
+        var conditionValue = ExecuteNodeAndGetResultValue(node.Operand);
+        var caseMatched = false;
+        foreach(var condition in node.CaseStatements)
+        {
+            var caseValue = ExecuteNodeAndGetResultValue(condition.Condition!);
+            if(conditionValue is null && caseValue is null || 
+               conditionValue is not null && conditionValue!.Equals(caseValue))
+            {
+                caseMatched = true;
+
+                CreateScope();
+                foreach (var expr in condition.Body)
+                {
+                    ExecuteNode(expr);
+                    if (_returnIsCalled || _breakIsCalled)
+                    {
+                        break;
+                    }
+                }
+                PopScope();
+            }
+        }
+
+        if(!caseMatched && node.DefaultStatement is not null)
+        {
+            CreateScope();
+            foreach (var expr in node.DefaultStatement.Body)
+            {
+                ExecuteNode(expr);
+                if (_returnIsCalled || _breakIsCalled)
+                {
+                    break;
+                }
+            }
+            PopScope();
+        }
+
+        if (_breakIsCalled)
+        {
+            _breakIsCalled = false;
+        }
+    }
+
     public void Visit(ForLoopNode node)
     {
         CreateScope();
