@@ -1,0 +1,50 @@
+STRUCT KeyValuePair
+    Key,
+    Value
+ENDSTRUCT
+
+STRUCT Dictionary
+    Pairs
+ENDSTRUCT
+
+FUNC InitializeHashtable(maxSize)
+    RETURN NEW Dictionary(NEW [maxSize], 0)
+ENDFUNC
+
+FUNC HashFunction(dictRef, key)
+    LET sum = 0
+    FOR LET i = 0 TO COUNT(key)
+        sum = sum + key[i]
+    ENDFOR
+    RETURN sum % COUNT(dictRef.Pairs)
+ENDFUNC
+
+FUNC AddToHashtable(hashTableRef, key, value)
+    LET index = HashFunction(hashTableRef, key)
+
+    WHILE hashTableRef.Pairs[index] != null && hashTableRef.Pairs[index].Key != key
+        index = (index + 1) % COUNT(hashTableRef.Pairs)
+    ENDWHILE
+
+    hashTableRef.Pairs[index] = NEW KeyValuePair(key, value)
+ENDFUNC
+
+FUNC FindInHashtable(hashTable, key)
+    LET index = HashFunction(hashTable, key)
+
+    WHILE hashTable.Pairs[index] != null
+        IF hashTable.Pairs[index].Key == key THEN
+            RETURN hashTable.Pairs[index].Value
+        ENDIF
+        index = (index + 1) % COUNT(hashTable.Pairs)
+    ENDWHILE
+
+    RETURN null
+ENDFUNC
+
+//Example usage
+LET dict = InitializeHashtable(16)
+AddToHashtable(REF dict, "Test", "I am a test")
+AddToHashtable(REF dict, "Test With Spaces", "I am another test")
+
+PRINT "Found: " + FindInHashtable(dict, "Test With Spaces")

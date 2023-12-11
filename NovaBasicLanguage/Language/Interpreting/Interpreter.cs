@@ -240,14 +240,17 @@ public partial class Interpreter : INodeVisitor
         }
 
         //Execute function
-        foreach (var bodyNode in func.Body)
+        new Action(() =>
         {
-            ExecuteNode(bodyNode);
-            if (_returnIsCalled)
+            foreach (var bodyNode in func.Body)
             {
-                break;
+                ExecuteNode(bodyNode);
+                if (_returnIsCalled)
+                {
+                    return;
+                }
             }
-        }
+        })();
 
         if (_returnIsCalled)
         {
@@ -279,13 +282,17 @@ public partial class Interpreter : INodeVisitor
         if (conditionResult)
         {
             CreateScope();
-            foreach (var expr in node.TrueBody) { 
-                ExecuteNode(expr);
-                if (_returnIsCalled)
+            new Action(() =>
+            {
+                foreach (var expr in node.TrueBody)
                 {
-                    break;
+                    ExecuteNode(expr);
+                    if (_returnIsCalled)
+                    {
+                        return;
+                    }
                 }
-            }
+            })();
             PopScope();
         }
         else
@@ -300,14 +307,17 @@ public partial class Interpreter : INodeVisitor
         if (!conditionResult)
         {
             CreateScope();
-            foreach (var expr in node.TrueBody)
+            new Action(() =>
             {
-                ExecuteNode(expr);
-                if (_returnIsCalled)
+                foreach (var expr in node.TrueBody)
                 {
-                    break;
+                    ExecuteNode(expr);
+                    if (_returnIsCalled)
+                    {
+                        return;
+                    }
                 }
-            }
+            })();
             PopScope();
         }
     }
@@ -325,14 +335,17 @@ public partial class Interpreter : INodeVisitor
                 caseMatched = true;
 
                 CreateScope();
-                foreach (var expr in condition.Body)
+                new Action(() =>
                 {
-                    ExecuteNode(expr);
-                    if (_returnIsCalled || _breakIsCalled)
+                    foreach (var expr in condition.Body)
                     {
-                        break;
+                        ExecuteNode(expr);
+                        if (_returnIsCalled || _breakIsCalled)
+                        {
+                            return;
+                        }
                     }
-                }
+                })();
                 PopScope();
             }
         }
@@ -340,14 +353,17 @@ public partial class Interpreter : INodeVisitor
         if(!caseMatched && node.DefaultStatement is not null)
         {
             CreateScope();
-            foreach (var expr in node.DefaultStatement.Body)
+            new Action(() =>
             {
-                ExecuteNode(expr);
-                if (_returnIsCalled || _breakIsCalled)
+                foreach (var expr in node.DefaultStatement.Body)
                 {
-                    break;
+                    if (_returnIsCalled || _breakIsCalled)
+                    {
+                        return;
+                    }
+                    ExecuteNode(expr);
                 }
-            }
+            })();
             PopScope();
         }
 
@@ -364,24 +380,28 @@ public partial class Interpreter : INodeVisitor
         var conditionMemoryItem = ExecuteNode(node.Condition).GetStoredItem()!;
         var untilCondition = Convert.ToInt32(ExecuteNodeAndGetResultValue(node.Until));
         var stepSize = Convert.ToInt32(ExecuteNodeAndGetResultValue(node.StepSize));
-        while (Convert.ToInt32(conditionMemoryItem.GetValue()) != untilCondition)
-        {
-            if (_breakIsCalled || _returnIsCalled)
-            {
-                break;
-            }
 
-            foreach(var bodyNode in node.Body)
+        new Action(() =>
+        {
+            while (Convert.ToInt32(conditionMemoryItem.GetValue()) != untilCondition)
             {
                 if (_breakIsCalled || _returnIsCalled)
                 {
                     break;
                 }
-                ExecuteNode(bodyNode);
-            }
 
-            conditionMemoryItem.SetValue(Convert.ToInt32(conditionMemoryItem.GetValue()) + stepSize);
-        }
+                foreach (var bodyNode in node.Body)
+                {
+                    if (_breakIsCalled || _returnIsCalled)
+                    {
+                        return;
+                    }
+                    ExecuteNode(bodyNode);
+                }
+
+                conditionMemoryItem.SetValue(Convert.ToInt32(conditionMemoryItem.GetValue()) + stepSize);
+            }
+        })();
 
         if (_breakIsCalled)
         {
@@ -396,24 +416,22 @@ public partial class Interpreter : INodeVisitor
         CreateScope();
 
         var condition = Operations.ToBool(ExecuteNodeAndGetResultValue(node.Condition));
-        while (condition)
+        new Action(() =>
         {
-            if (_breakIsCalled || _returnIsCalled)
+            while (condition)
             {
-                break;
-            }
-
-            foreach (var bodyNode in node.Body)
-            {
-                if (_breakIsCalled || _returnIsCalled)
+                foreach (var bodyNode in node.Body)
                 {
-                    break;
+                    if (_breakIsCalled || _returnIsCalled)
+                    {
+                        return;
+                    }
+                    ExecuteNode(bodyNode);
                 }
-                ExecuteNode(bodyNode);
-            }
 
-            condition = Operations.ToBool(ExecuteNodeAndGetResultValue(node.Condition));
-        }
+                condition = Operations.ToBool(ExecuteNodeAndGetResultValue(node.Condition));
+            }
+        })();
 
         if (_breakIsCalled)
         {

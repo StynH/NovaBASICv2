@@ -13,7 +13,9 @@ public class ReturnParser : INodeParser
 {
     public AstNode Parse(Queue<string> tokens, string currentToken, Parser parser)
     {
-        if (tokens.TryPeek(out var next) && next.IsKeyword())
+        if (tokens.TryPeek(out var next) 
+            && !next.Equals(Tokens.KEYWORD_NEW) 
+            && next.IsKeyword())
         {
             return new ReturnNode(new NullNode());
         }

@@ -4,19 +4,21 @@ public static class Operations
 {
     public static object Add(object lhs, object rhs)
     {
+        if (lhs is string || rhs is string)
+        {
+            var lhsString = lhs as string ?? "null";
+            var rhsString = rhs as string ?? "null";
+            return lhsString + rhsString;
+        }
+
         if (lhs == null)
         {
-            return rhs ?? "";
+            return rhs ?? "null";
         }
 
         if (rhs == null)
         {
             return lhs;
-        }
-
-        if (lhs is string || rhs is string)
-        {
-            return lhs.ToString() + rhs.ToString();
         }
 
         if (TryAddAsDecimals(lhs, rhs, out var decimalVar))
@@ -55,5 +57,20 @@ public static class Operations
             bool boolValue => boolValue,
             _ => throw new InvalidCastException($"Unable to cast typeof '{value.GetType()}' to bool."),
         };
+    }
+
+    public static bool Equal(dynamic lhs, dynamic rhs)
+    {
+        if(lhs is null && rhs is null)
+        {
+            return true;
+        }
+
+        if(lhs is null || rhs is null)
+        {
+            return false;
+        }
+
+        return lhs.Equals(rhs);
     }
 }
