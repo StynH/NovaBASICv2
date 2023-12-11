@@ -6,6 +6,8 @@ namespace NovaBASIC.Extensions;
 
 public static partial class StringExtensions
 {
+    private static readonly string[] separator = ["\r\n", "\r", "\n"];
+
     public static bool IsArithmetic(this string value)
     {
         return value.Equals(Tokens.PLUS) || value.Equals(Tokens.MINUS) || value.Equals(Tokens.DIVIDE) || value.Equals(Tokens.MODULO) || value.Equals(Tokens.MULTIPLY);
@@ -67,7 +69,7 @@ public static partial class StringExtensions
 
     public static string RemoveCommentLines(this string input)
     {
-        return string.Join(Environment.NewLine, input.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None)
+        return string.Join(Environment.NewLine, input.Split(separator, StringSplitOptions.None)
             .Where(line => !line.TrimStart()
             .StartsWith("//"))
         );
@@ -85,5 +87,19 @@ public static partial class StringExtensions
         return Tokens
             .GetKeywords()
             .Contains(input);
+    }
+
+    public static bool IsKeywordOrKnownStlFunction(this string input)
+    {
+        return Tokens
+            .GetKeywordsAndStlFunctions()
+            .Contains(input);
+    }
+
+    public static bool IsType(this string input)
+    {
+        return Tokens
+                .GetTypes()
+                .Contains(input);
     }
 }

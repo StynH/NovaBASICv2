@@ -75,6 +75,12 @@ public static partial class Tokens
     public const string KEYWORD_END_SWITCH = "ENDSWITCH";
     public const string KEYWORD_CASE = "CASE";
     public const string KEYWORD_DEFAULT = "DEFAULT";
+    public const string KEYWORD_IS = "IS";
+
+    public const string TYPE_STRING = "STRING";
+    public const string TYPE_INT = "INT";
+    public const string TYPE_FLOAT = "FLOAT";
+    public const string TYPE_ARRAY = "ARRAY";
 
     public static string BuildRegexPattern()
     {
@@ -90,7 +96,7 @@ public static partial class Tokens
         return string.Join("|", fields.Select(f => f.Name.EndsWith("_PATTERN") ? f.Value : Regex.Escape(f.Value!)));
     }
 
-    public static IList<string> GetKeywords()
+    public static IList<string> GetKeywordsAndStlFunctions()
     {
         var fields = typeof(Tokens)
              .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly)
@@ -103,6 +109,40 @@ public static partial class Tokens
 
         return fields
             .Where(f => f.Name.StartsWith("KEYWORD_") || f.Name.EndsWith("_STL"))
+            .Select(f => f.Value!)
+            .ToList();
+    }
+
+    public static IList<string> GetKeywords()
+    {
+        var fields = typeof(Tokens)
+             .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly)
+             .Where(field => field.FieldType == typeof(string))
+             .Select(field => new
+             {
+                 field.Name,
+                 Value = field.GetValue(null) as string
+             });
+
+        return fields
+            .Where(f => f.Name.StartsWith("KEYWORD_"))
+            .Select(f => f.Value!)
+            .ToList();
+    }
+
+    public static IList<string> GetTypes()
+    {
+        var fields = typeof(Tokens)
+             .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly)
+             .Where(field => field.FieldType == typeof(string))
+             .Select(field => new
+             {
+                 field.Name,
+                 Value = field.GetValue(null) as string
+             });
+
+        return fields
+            .Where(f => f.Name.StartsWith("TYPE_"))
             .Select(f => f.Value!)
             .ToList();
     }

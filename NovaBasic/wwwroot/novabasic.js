@@ -2,11 +2,38 @@
     // Set defaultToken to invalid to see what you do not tokenize yet
     defaultToken: 'invalid',
 
+    keywords: [
+        'LET', 'IMMUTABLE', 'STRUCT', 'ENDSTRUCT', 'ENDFUNC', 'GUARD',
+        'MATCHES', 'ELSE', 'ENDGUARD', 'IF', 'THEN', 'ELSEIF',
+        'ENDIF', 'SWITCH', 'ENDSWITCH', 'CASE', 'DEFAULT', 'RETURN',
+        'BREAK', 'FOR', 'TO', 'STEP', 'ENDFOR', 'REPEAT',
+        'UNTIL', 'WHILE', 'ENDWHILE', 'PRINT', 'COUNT', 'TO_ARRAY',
+        'REF', 'FUNC', 'ENDFUNC', 'NEW', 'NOT', 'IS'
+    ],
+
+    typeKeywords: [
+        'INT', 'FLOAT', 'STRING', 'BOOLEAN', 'ARRAY', 'STRUCT'
+        ,'null', 'true', 'false'
+    ],
+
+    operators: [
+        '=', '>', '<', '!', '~', '?', ':', '==', '<=', '>=', '!=',
+        '&&', '||', '++', '--', '+', '-', '*', '/', '&', '|', '^', '%',
+        '<<', '>>', '>>>', '+=', '-=', '*=', '/=', '&=', '|=', '^=',
+        '%=', '<<=', '>>=', '>>>='
+    ],
+
     // The main tokenizer for our languages
     tokenizer: {
         root: [
             // keywords and guards
-            [/\b(?:LET|IMMUTABLE|STRUCT|ENDSTRUCT|ENDFUNC|GUARD|MATCHES|ELSE|ENDGUARD|IF|THEN|ELSEIF|ENDIF|SWITCH|ENDSWITCH|CASE|DEFAULT|RETURN|BREAK|FOR|TO|STEP|ENDFOR|REPEAT|UNTIL|WHILE|ENDWHILE|PRINT|COUNT|TO_ARRAY|REF|FUNC|ENDFUNC|NEW|NOT|null|true|false)\b/, 'keyword'],
+            [/[a-zA-Z_$][\w$]*/, {
+                cases: {
+                    '@typeKeywords': 'keyword',
+                    '@keywords': 'keyword',
+                    '@default': 'identifier'
+                }
+            }],
 
             // numbers
             [/\b\d+\b/, 'number'],
@@ -19,7 +46,12 @@
 
             // delimiters and operators
             [/[{}()\[\]]/, '@brackets'],
-            [/@symbols/, 'delimiter'],
+            [/@symbols/, {
+                cases: {
+                    '@operators': 'delimiter',
+                    '@default': ''
+                }
+            }],
 
             [/\d*\.\d+([eE][\-+]?\d+)?/, 'number.float'],
             [/\d+/, 'number'],

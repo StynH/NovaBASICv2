@@ -4,6 +4,7 @@ using NovaBASIC.Language.Lexicon;
 using NovaBASIC.Language.Parsing.Nodes;
 using NovaBASIC.Language.STL.Attribute;
 using NovaBASIC.Language.STL.Functions.Interface;
+using NovaBasicLanguage.Language.Interpreting.Safe;
 using System.Text.RegularExpressions;
 
 namespace NovaBASIC.Language.STL.Functions;
@@ -28,10 +29,25 @@ public class ComparisonFunction : IStlFunction
                 return ExecuteArrayOperation(binaryNode.Op, lhsArray, rhsArray);
             }
 
+            if(rhs is TypeCaster typeCaster)
+            {
+                return ExecuteTypeCheck(binaryNode.Op, lhs, typeCaster);
+            }
+
             return ExecuteOperand(binaryNode.Op, lhs, rhs);
         }
 
         return null;
+    }
+
+    private static bool ExecuteTypeCheck(string op, object? lhs, TypeCaster typeCaster)
+    {
+        return op switch
+        {
+            Tokens.EQUALS => typeCaster.Equals(lhs),
+            Tokens.NOT_EQUALS => !typeCaster.Equals(lhs),
+            _ => false
+        };
     }
 
     private static object? ExecuteOperand(string op, dynamic lhs, dynamic rhs)
@@ -43,8 +59,8 @@ public class ComparisonFunction : IStlFunction
             Tokens.DIVIDE => lhs / rhs,
             Tokens.MULTIPLY => lhs * rhs,
             Tokens.MODULO => lhs % rhs,
-            Tokens.EQUALS => lhs == rhs,
-            Tokens.NOT_EQUALS => lhs != rhs,
+            Tokens.EQUALS => lhs.Equals(rhs),
+            Tokens.NOT_EQUALS => !lhs.Equals(rhs),
             Tokens.GTE => lhs >= rhs,
             Tokens.LTE => lhs <= rhs,
             Tokens.LT => lhs < rhs,

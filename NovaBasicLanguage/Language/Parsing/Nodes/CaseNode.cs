@@ -1,6 +1,6 @@
 ﻿using NovaBASIC.Language.Parsing.Nodes;
 
-namespace NovaBasicLanguage.Language.Parsing;
+namespace NovaBasicLanguage.Language.Parsing.Nodes;
 
 public class CaseNode(AstNode? condition, AstNode[] body) : AstNode
 {

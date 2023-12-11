@@ -8,6 +8,7 @@ using NovaBasicLanguage.Extensions;
 using NovaBasicLanguage.Language.Parsing.Nodes;
 using NovaBasicLanguage.Language.Parsing.Nodes.Array;
 using NovaBasicLanguage.Language.Parsing.Nodes.Declarations;
+using NovaBasicLanguage.Language.Parsing.Parsers;
 
 namespace NovaBASIC.Language.Parsing;
 
@@ -82,6 +83,11 @@ public partial class Parser
                     term = BalanceNode(new BinaryNode(term, op, ParseTerm()));
                     break;
 
+                case var type when next.Equals(Tokens.KEYWORD_IS):
+                    _tokens.Dequeue();
+                    term = new InstanceOfNode(term, _tokens.Dequeue());
+                    break;
+
                 default:
                     return term;
             }
@@ -109,12 +115,22 @@ public partial class Parser
             return _tokenParsers["SLICING_INDEX"].Parse(_tokens, token, this);
         }
 
+        if (token.IsType())
+        {
+            return ParseType(token);
+        }
+
         if (token.IsVariable())
         {
             return ProcessVariableToken(token);
         }
 
         return _tokenParsers["CONSTANTS"].Parse(_tokens, token, this);
+    }
+
+    private static TypeNode ParseType(string token)
+    {
+        return new TypeNode(token);
     }
 
     private AstNode ProcessVariableToken(string token)

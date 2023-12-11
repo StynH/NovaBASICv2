@@ -5,12 +5,14 @@ using NovaBASIC.Language.Runtime;
 using NovaBasicLanguage.Language.Exceptions;
 using NovaBasicLanguage.Language.Helpers;
 using NovaBasicLanguage.Language.Interpreting;
+using NovaBasicLanguage.Language.Interpreting.Safe;
 using NovaBasicLanguage.Language.Parsing.Nodes;
 using NovaBasicLanguage.Language.Parsing.Nodes.Array;
 using NovaBasicLanguage.Language.Parsing.Nodes.Declarations;
 using NovaBasicLanguage.Language.Parsing.Nodes.Instances;
 using NovaBasicLanguage.Language.Parsing.Nodes.Loops;
 using NovaBasicLanguage.Language.Parsing.Nodes.References;
+using NovaBasicLanguage.Language.Parsing.Parsers;
 using NovaBasicLanguage.Language.Runtime;
 using NovaBasicLanguage.Language.Runtime.Indexing;
 using System.Reflection;
@@ -156,6 +158,29 @@ public partial class Interpreter : INodeVisitor
     public void Visit(GroupNode node)
     {
         Result.Set(ExecuteNodeAndGetResultValue(node.Inner));
+    }
+
+    public void Visit(TypeNode node)
+    {
+        Result.Set(TypeCaster.FromTypeName(node.TypeName));
+    }
+
+    public void Visit(InstanceOfNode node)
+    {
+        var value = ExecuteNodeAndGetResultValue(node.Operand);
+        if(TypeCaster.TryFromTypeName(node.TypeName, out var typeCaster))
+        {
+            Result.Set(typeCaster!.Equals(value));
+            return;
+        }
+
+        if(value is MemoryStruct memoryStruct)
+        {
+            Result.Set(memoryStruct.Name.Equals(node.TypeName));
+            return;
+        }
+
+        Result.Set(false);
     }
 
     public void Visit(ReferenceNode node)

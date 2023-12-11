@@ -91,6 +91,25 @@ myFunc(i)
 myFunc(j)
 ```
 
+### Type Checking
+```
+STRUCT Person
+    Name
+ENDSTRUCT
+
+FUNC GetNameLength(p)
+    GUARD p IS Person ELSE
+        PRINT "Parameter must be a 'Person'!"
+        RETURN -1
+    ENDGUARD
+
+    RETURN COUNT(p.Name)
+ENDFUNC
+
+PRINT GetNameLength(NEW Person("Bob Ross"))
+PRINT GetNameLength(25)
+```
+
 ### Array Slicing
 ```
 LET arr = NEW[10]
