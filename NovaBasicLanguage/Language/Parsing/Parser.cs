@@ -48,7 +48,11 @@ public partial class Parser
         {
             nodes.Add(ParseTernary());
         }
-        nodes.MoveToFront((node) => node is FunctionDeclarationNode);
+        nodes.MoveToFront(new Dictionary<Type, int>
+        {
+            { typeof(StructDeclarationNode), 1 },
+            { typeof(FunctionDeclarationNode), 2 }
+        });
         return nodes;
     }
 

@@ -1,6 +1,9 @@
 ﻿using NovaBASIC.Language.Interpreting;
 using NovaBASIC.Language.Lexicon;
 using NovaBASIC.Language.Parsing;
+using NovaBasicLanguage.Language.Preprocessor;
+using System.Linq.Expressions;
+using System.Reflection;
 
 namespace NovaBasicDesktopRunner;
 
@@ -15,9 +18,13 @@ internal class Program
 
         if (string.IsNullOrEmpty(filename))
         {
+#if DEBUG
+            filename = "debug.nova";
+#else
             Console.WriteLine("Please provide a .nova file as an argument.");
             WaitForInput();
             return;
+#endif
         }
 
         if (!File.Exists(filename))
@@ -29,7 +36,7 @@ internal class Program
 
         try
         {
-            string code = File.ReadAllText(filename);
+            string code = Preprocessor.PreprocessCode(File.ReadAllText(filename));
 
             var lexer = new Lexer();
             lexer.LoadCodeIntoLexer(code);
@@ -47,6 +54,11 @@ internal class Program
         }
         catch (Exception ex)
         {
+            while(ex.InnerException is null)
+            {
+                ex = ex.InnerException;
+            }
+
             Console.WriteLine($"An error occurred: {ex.Message}");
             Console.ReadKey();
         }

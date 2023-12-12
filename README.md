@@ -118,3 +118,34 @@ LET lastSeven = arr[3:]
 LET between = arr[2:5]
 LET inTwo = arr[1:10:2]
 ```
+
+### Import/Export (Desktop Only)
+```
+//File1.nova
+IMMUTABLE myConst = 3.14
+
+STRUCT myStruct
+	Val
+ENDSTRUCT
+
+EXPORT
+	myConst,
+	myStruct
+ENDEXPORT
+
+//File2.nova
+FUNC myFunc(var1)
+	PRINT var1
+ENDFUNC
+
+EXPORT
+	myFunc
+ENDEXPORT
+
+//File3.nova
+IMPORT FROM "File1"
+IMPORT "MyFunc" FROM "File2"
+
+LET i = NEW myStruct(myConst)
+myFunc(i)
+```
