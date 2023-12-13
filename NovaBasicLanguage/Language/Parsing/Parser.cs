@@ -87,7 +87,7 @@ public partial class Parser
                     term = BalanceNode(new BinaryNode(term, op, ParseTerm()));
                     break;
 
-                case var type when next.Equals(Tokens.KEYWORD_IS):
+                case var _ when next.Equals(Tokens.KEYWORD_IS):
                     _tokens.Dequeue();
                     term = new InstanceOfNode(term, _tokens.Dequeue());
                     break;
@@ -251,9 +251,11 @@ public partial class Parser
     {
         return op switch
         {
-            Tokens.EQUALS or Tokens.NOT_EQUALS or Tokens.GT or Tokens.GTE or Tokens.LT or Tokens.LTE or Tokens.AND or Tokens.OR => 0,
-            Tokens.PLUS or Tokens.MINUS => 1,
-            Tokens.MULTIPLY or Tokens.DIVIDE or Tokens.MODULO => 2,
+            Tokens.AND or Tokens.OR => 0,
+            Tokens.EQUALS or Tokens.NOT_EQUALS or Tokens.GT or Tokens.GTE or Tokens.LT or Tokens.LTE => 1,
+            Tokens.PLUS or Tokens.MINUS => 2,
+            Tokens.MULTIPLY or Tokens.DIVIDE or Tokens.MODULO => 3,
+            Tokens.BITWISE_OR or Tokens.BITWISE_AND or Tokens.BITWISE_NOT or Tokens.BITWISE_XOR or Tokens.BITWISE_LEFT_SHIFT or Tokens.BITWISE_RIGHT_SHIFT => 4,
             _ => -1,
         };
     }

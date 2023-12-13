@@ -13,7 +13,6 @@ public static partial class Tokens
     public const string MULTIPLY = "*";
     public const string DIVIDE = "/";
     public const string MODULO = "%";
-    public const string POWER = "^";
     public const string QUESTION_MARK = "?";
     public const string SEMICOLON = ":";
     public const string COMMA = ",";

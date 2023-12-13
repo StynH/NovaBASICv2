@@ -2,8 +2,6 @@
 using NovaBASIC.Language.Lexicon;
 using NovaBASIC.Language.Parsing;
 using NovaBasicLanguage.Language.Preprocessor;
-using System.Linq.Expressions;
-using System.Reflection;
 
 namespace NovaBasicDesktopRunner;
 
@@ -54,9 +52,9 @@ internal class Program
         }
         catch (Exception ex)
         {
-            while(ex.InnerException is null)
+            while(ex!.InnerException is null)
             {
-                ex = ex.InnerException;
+                ex = ex.InnerException!;
             }
 
             Console.WriteLine($"An error occurred: {ex.Message}");

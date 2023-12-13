@@ -80,12 +80,12 @@ public class ComparisonFunction : IStlFunction
 
     private static object? ExecuteOr(Interpreter interpreter, BinaryNode binaryNode)
     {
-        var lhs = interpreter.ExecuteNode(binaryNode.Left) as dynamic;
+        var lhs = interpreter.ExecuteNodeAndGetResultValue(binaryNode.Left) as dynamic;
         if (lhs)
         {
             return true;
         }
-        return interpreter.ExecuteNode(binaryNode.Right);
+        return interpreter.ExecuteNodeAndGetResultValue(binaryNode.Right);
     }
 
     private object[] ExecuteArrayOperation(string op, object[] lhsArray, object[] rhsArray)
