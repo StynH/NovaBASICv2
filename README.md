@@ -125,21 +125,21 @@ LET inTwo = arr[1:10:2]
 IMMUTABLE myConst = 3.14
 
 STRUCT myStruct
-	Val
+    Val
 ENDSTRUCT
 
 EXPORT
-	myConst,
-	myStruct
+    myConst,
+    myStruct
 ENDEXPORT
 
 //File2.nova
 FUNC myFunc(var1)
-	PRINT var1
+    PRINT var1
 ENDFUNC
 
 EXPORT
-	myFunc
+    myFunc
 ENDEXPORT
 
 //File3.nova
